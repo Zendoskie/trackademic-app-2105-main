@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, BookOpen, Bell, User } from "lucide-react";
+import { BookOpen, Bell, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -39,14 +39,13 @@ const MobileBottomNav = () => {
       : "/student-dashboard";
 
   const navItems = [
-    { icon: Home, label: "Home", path: basePath },
     { icon: BookOpen, label: "Courses", path: basePath },
     { icon: Bell, label: "Alerts", path: `${basePath}/alerts`, isBell: true },
     { icon: User, label: "Profile", path: `${basePath}/profile` },
   ];
 
   const isActive = (path: string, label: string) => {
-    if (label === "Home" || label === "Courses") {
+    if (label === "Courses") {
       return location.pathname === basePath;
     }
     return location.pathname === path;
