@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Trackademic Design System - Fresh, vibrant academic theme */
+
+@layer base {
+  :root {
+    /* Deep slate background with subtle warmth */
+    --background: 222 47% 8%;
+    --foreground: 210 20% 98%;
+
+    /* Cards - elevated with subtle warmth */
+    --card: 222 40% 11%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 222 40% 11%;
+    --popover-foreground: 210 20% 98%;
+
+    /* Primary: Vibrant teal/emerald */
+    --primary: 168 76% 42%;
+    --primary-foreground: 222 47% 6%;
+    --primary-hover: 168 76% 48%;
+
+    /* Secondary: Warmer slate */
+    --secondary: 222 35% 14%;
+    --secondary-foreground: 210 20% 98%;
+    --secondary-hover: 222 35% 18%;
+
+    /* Muted: Softer backgrounds */
+    --muted: 222 35% 13%;
+    --muted-foreground: 215 20% 60%;
+
+    /* Accent: Warm amber for highlights */
+    --accent: 38 92% 50%;
+    --accent-foreground: 222 47% 6%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Form elements */
+    --border: 222 35% 18%;
+    --input: 222 40% 10%;
+    --input-border: 222 35% 22%;
+    --ring: 168 76% 42%;
+
+    --radius: 0.75rem;
+
+    /* Sidebar */
+    --sidebar-background: 222 45% 9%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 168 76% 42%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 222 35% 14%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 222 35% 18%;
+    --sidebar-ring: 168 76% 42%;
+  }
+
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 210 20% 98%;
+    --card: 222 40% 11%;
+    --card-foreground: 210 20% 98%;
+    --popover: 222 40% 11%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 168 76% 42%;
+    --primary-foreground: 222 47% 6%;
+    --primary-hover: 168 76% 48%;
+    --secondary: 222 35% 14%;
+    --secondary-foreground: 210 20% 98%;
+    --secondary-hover: 222 35% 18%;
+    --muted: 222 35% 13%;
+    --muted-foreground: 215 20% 60%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 222 47% 6%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 35% 18%;
+    --input: 222 40% 10%;
+    --input-border: 222 35% 22%;
+    --ring: 168 76% 42%;
+    --sidebar-background: 222 45% 9%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 168 76% 42%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 222 35% 14%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 222 35% 18%;
+    --sidebar-ring: 168 76% 42%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Outfit", system-ui, sans-serif;
+    background: linear-gradient(165deg, hsl(222 47% 8%) 0%, hsl(222 50% 6%) 50%, hsl(224 55% 5%) 100%);
+    min-height: 100vh;
+    background-attachment: fixed;
+  }
+
+  /* Typography */
+  h1 {
+    @apply text-2xl font-bold tracking-tight sm:text-3xl;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    @apply text-xl font-semibold tracking-tight sm:text-2xl;
+    letter-spacing: -0.01em;
+  }
+
+  /* Trackademic specific styles */
+  .trackademic-container {
+    @apply min-h-screen px-3 py-4 pb-20 sm:px-6 sm:py-8 sm:pb-8 lg:px-8;
+    background: transparent;
+  }
+
+  .trackademic-card {
+    @apply rounded-2xl;
+    background: linear-gradient(145deg, hsl(222 40% 12%) 0%, hsl(222 38% 10%) 100%);
+    border: 1px solid hsl(222 35% 20% / 0.8);
+    box-shadow: 
+      0 4px 24px -4px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  }
+
+  .trackademic-brand {
+    background: linear-gradient(135deg, hsl(168 76% 48%) 0%, hsl(168 76% 42%) 50%, hsl(168 70% 55%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+}
