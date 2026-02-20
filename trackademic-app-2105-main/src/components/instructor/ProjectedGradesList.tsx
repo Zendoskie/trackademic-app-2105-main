@@ -58,7 +58,6 @@ export default function ProjectedGradesList({ courseId, courseName }: ProjectedG
         if (cancelled) return;
         setStudents(studentList);
 
-        const studentIds = studentList.map((s) => s.student_id);
         const gradesMap = await fetchProjectedGradesForStudents(courseId, studentIds);
         if (!cancelled) setGrades(gradesMap);
       } catch {
