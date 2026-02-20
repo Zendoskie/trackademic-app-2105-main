@@ -32,32 +32,24 @@ export default function NotificationBell() {
 
   const fetchNotifications = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      console.log("No user found, skipping notification fetch");
-      return;
-    }
+    if (!user) return;
 
     // Get user role and verify profile exists
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile } = await supabase
       .from("profiles")
       .select("role, id")
       .eq("id", user.id)
       .maybeSingle();
-    
-    if (profileError) {
-      console.error("Error fetching profile:", profileError);
-    }
-    
+
     if (!profile) {
-      console.warn("Profile not found for user:", user.id);
       setNotifications([]);
       setUnreadCount(0);
       return;
     }
-    
+
     if (profile?.role) setUserRole(profile.role);
-    
-    // Fetch notifications - RLS policy ensures we only see our own notifications
+
+    // Fetch notifications - RLS allows rows where auth.uid() = user_id (students, instructors, parents)
     const { data, error } = await supabase
       .from("notifications")
       .select("*")
@@ -66,27 +58,15 @@ export default function NotificationBell() {
       .limit(50);
 
     if (error) {
-      console.error("Error fetching notifications:", error);
-      console.error("Error details:", {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-        userId: user.id,
-        userRole: profile?.role,
-      });
-      // Still set empty array on error to avoid showing stale data
       setNotifications([]);
       setUnreadCount(0);
       return;
     }
 
     if (data) {
-      console.log(`Fetched ${data.length} notifications for user ${user.id} (role: ${profile?.role})`);
       setNotifications(data);
       setUnreadCount(data.filter((n) => !n.is_read).length);
     } else {
-      console.log("No notifications data returned");
       setNotifications([]);
       setUnreadCount(0);
     }
@@ -95,9 +75,6 @@ export default function NotificationBell() {
   useEffect(() => {
     fetchNotifications();
 
-    // Subscribe to new notifications
-    // Note: Realtime respects RLS policies, so we'll only receive events for notifications
-    // where auth.uid() = user_id (based on the RLS policy)
     const channel = supabase
       .channel("notifications-realtime")
       .on(
@@ -107,24 +84,20 @@ export default function NotificationBell() {
           schema: "public",
           table: "notifications",
         },
-        () => {
-          // Refetch notifications when a new one is inserted
-          // RLS ensures we only get events for our own notifications
-          fetchNotifications();
-        }
+        () => fetchNotifications()
       )
-      .subscribe((status) => {
-        if (status === "SUBSCRIBED") {
-          console.log("Subscribed to notifications channel");
-        } else if (status === "CHANNEL_ERROR") {
-          console.error("Error subscribing to notifications channel:", status);
-        }
-      });
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  // Refetch when opening the popover so parent (and others) always see latest
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen) fetchNotifications();
+  };
 
   const markAsRead = async (id: string) => {
     await supabase
@@ -154,18 +127,31 @@ export default function NotificationBell() {
 
   const handleNotificationClick = (notification: Notification) => {
     if (!notification.is_read) markAsRead(notification.id);
+    setOpen(false);
+
     if (!notification.course_id) return;
 
-    let basePath = "/student-dashboard";
-    if (userRole === "instructor") basePath = "/instructor-dashboard";
-    else if (userRole === "parent") basePath = "/parent-dashboard";
-
-    if (notification.type === "activity" && notification.activity_file_id) {
-      navigate(`${basePath}/course/${notification.course_id}/activities`);
-    } else {
-      navigate(`${basePath}/course/${notification.course_id}`);
+    if (userRole === "instructor") {
+      if (notification.type === "activity" && notification.activity_file_id) {
+        navigate(`/instructor-dashboard/course/${notification.course_id}/activities`);
+      } else {
+        navigate(`/instructor-dashboard/course/${notification.course_id}`);
+      }
+      return;
     }
-    setOpen(false);
+
+    if (userRole === "parent") {
+      // Parent routes require studentId; notification doesn't include it. Send to dashboard so they can pick their student/course.
+      navigate("/parent-dashboard");
+      return;
+    }
+
+    // Student
+    if (notification.type === "activity" && notification.activity_file_id) {
+      navigate(`/student-dashboard/course/${notification.course_id}/activities`);
+    } else {
+      navigate(`/student-dashboard/course/${notification.course_id}`);
+    }
   };
 
   const getIcon = (type: string) => {
@@ -180,7 +166,7 @@ export default function NotificationBell() {
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button variant="outline" size="icon" className="relative">
           <Bell className="h-4 w-4" />
