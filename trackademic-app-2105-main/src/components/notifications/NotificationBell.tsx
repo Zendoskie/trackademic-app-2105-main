@@ -32,15 +32,32 @@ export default function NotificationBell() {
 
   const fetchNotifications = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) {
+      console.log("No user found, skipping notification fetch");
+      return;
+    }
 
-    // Get user role
-    const { data: profile } = await supabase
+    // Get user role and verify profile exists
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, id")
       .eq("id", user.id)
       .maybeSingle();
+    
+    if (profileError) {
+      console.error("Error fetching profile:", profileError);
+    }
+    
+    if (!profile) {
+      console.warn("Profile not found for user:", user.id);
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+    
     if (profile?.role) setUserRole(profile.role);
+    
+    // Fetch notifications - RLS policy ensures we only see our own notifications
     const { data, error } = await supabase
       .from("notifications")
       .select("*")
@@ -48,9 +65,30 @@ export default function NotificationBell() {
       .order("created_at", { ascending: false })
       .limit(50);
 
-    if (!error && data) {
+    if (error) {
+      console.error("Error fetching notifications:", error);
+      console.error("Error details:", {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+        userId: user.id,
+        userRole: profile?.role,
+      });
+      // Still set empty array on error to avoid showing stale data
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+
+    if (data) {
+      console.log(`Fetched ${data.length} notifications for user ${user.id} (role: ${profile?.role})`);
       setNotifications(data);
       setUnreadCount(data.filter((n) => !n.is_read).length);
+    } else {
+      console.log("No notifications data returned");
+      setNotifications([]);
+      setUnreadCount(0);
     }
   };
 
@@ -58,6 +96,8 @@ export default function NotificationBell() {
     fetchNotifications();
 
     // Subscribe to new notifications
+    // Note: Realtime respects RLS policies, so we'll only receive events for notifications
+    // where auth.uid() = user_id (based on the RLS policy)
     const channel = supabase
       .channel("notifications-realtime")
       .on(
@@ -68,10 +108,18 @@ export default function NotificationBell() {
           table: "notifications",
         },
         () => {
+          // Refetch notifications when a new one is inserted
+          // RLS ensures we only get events for our own notifications
           fetchNotifications();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          console.log("Subscribed to notifications channel");
+        } else if (status === "CHANNEL_ERROR") {
+          console.error("Error subscribing to notifications channel:", status);
+        }
+      });
 
     return () => {
       supabase.removeChannel(channel);
