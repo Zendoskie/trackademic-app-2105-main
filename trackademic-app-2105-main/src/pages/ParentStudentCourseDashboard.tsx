@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, BookOpen, ClipboardList, FileText } from "lucide-react";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
+import { ProjectedGradeCard } from "@/components/shared/ProjectedGradeCard";
+import { useProjectedGrade } from "@/hooks/useProjectedGrade";
 
 interface Course {
   id: string;
@@ -24,6 +26,7 @@ export default function ParentStudentCourseDashboard() {
   const [studentName, setStudentName] = useState<string>("");
   const [isAuthorized, setIsAuthorized] = useState(false);
   const { toast } = useToast();
+  const projectedGrade = useProjectedGrade(courseId || undefined, studentId || undefined);
 
   useEffect(() => {
     const getSession = async () => {
@@ -163,6 +166,13 @@ export default function ParentStudentCourseDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Projected Grade */}
+        {studentId && courseId && (
+          <div className="mb-8">
+            <ProjectedGradeCard data={projectedGrade} courseTitle={course.title} />
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">

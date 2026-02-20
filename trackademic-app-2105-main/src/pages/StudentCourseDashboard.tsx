@@ -8,6 +8,8 @@ import { ArrowLeft, BookOpen, FileText, QrCode, ClipboardList } from "lucide-rea
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
 import QRScanner from "@/components/student/QRScanner";
 import AttendanceHistoryList from "@/components/instructor/AttendanceHistoryList";
+import { ProjectedGradeCard } from "@/components/shared/ProjectedGradeCard";
+import { useProjectedGrade } from "@/hooks/useProjectedGrade";
 
 interface Course {
   id: string;
@@ -23,6 +25,7 @@ export default function StudentCourseDashboard() {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const projectedGrade = useProjectedGrade(courseId || undefined, currentUserId || undefined);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -115,6 +118,13 @@ export default function StudentCourseDashboard() {
             )}
           </div>
         </div>
+
+        {/* Projected Grade */}
+        {currentUserId && (
+          <div className="mb-6 sm:mb-8">
+            <ProjectedGradeCard data={projectedGrade} courseTitle={course.title} />
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">

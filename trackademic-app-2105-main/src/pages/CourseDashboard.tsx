@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users, QrCode, ClipboardList, BookOpen, Copy, FileText, Radio } from "lucide-react";
+import ProjectedGradesList from "@/components/instructor/ProjectedGradesList";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 interface Course {
@@ -126,6 +127,13 @@ const CourseDashboard = () => {
             <span>Sessions</span>
           </Button>
         </div>
+
+        {/* Projected Grades */}
+        {courseId && (
+          <div className="mb-6 sm:mb-8">
+            <ProjectedGradesList courseId={courseId} courseName={course.title} />
+          </div>
+        )}
       </div>
       <MobileBottomNav />
     </div>;
