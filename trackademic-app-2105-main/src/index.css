@@ -102,6 +102,7 @@
     background: linear-gradient(165deg, hsl(222 47% 8%) 0%, hsl(222 50% 6%) 50%, hsl(224 55% 5%) 100%);
     min-height: 100vh;
     background-attachment: fixed;
+    padding-top: env(safe-area-inset-top, 20px);
   }
 
   /* Typography */

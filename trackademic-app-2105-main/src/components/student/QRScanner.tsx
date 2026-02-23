@@ -7,6 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 
 interface QRScannerProps {
   onScanSuccess?: (decodedText: string) => void;
+  /** When true, automatically starts the camera when the component mounts. Triggers camera permission prompt. */
+  autoStart?: boolean;
 }
 
 type ScannerError = 'permission_denied' | 'permission_dismissed' | 'no_camera' | 'in_use' | 'generic' | null;
@@ -31,7 +33,7 @@ function isInUseError(err: any): boolean {
   return msg.includes('notreadableerror') || msg.includes('could not start video');
 }
 
-export default function QRScanner({ onScanSuccess }: QRScannerProps) {
+export default function QRScanner({ onScanSuccess, autoStart = false }: QRScannerProps) {
   const { toast } = useToast();
   const [isScanning, setIsScanning] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
@@ -102,8 +104,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
     // 2. facingMode: user    → front camera fallback
     // 3. bare true           → let browser pick any camera (last resort)
     const cameraConstraints: Array<string | MediaTrackConstraints> = [
-      { facingMode: { ideal: "environment" } } as MediaTrackConstraints,
-      { facingMode: "user" } as MediaTrackConstraints,
+      { facingMode: { exact: "environment" } } as MediaTrackConstraints,
     ];
 
     let lastError: any = null;
@@ -146,6 +147,15 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
       setScannerError('generic');
     }
   };
+
+  // Auto-start camera when autoStart is true (e.g. when landing on QR scanner page)
+  useEffect(() => {
+    if (autoStart && !isScanning && !isStarting && !scannerError) {
+      const timer = setTimeout(handleStartScanner, 300);
+      return () => clearTimeout(timer);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- only run when autoStart becomes true
+  }, [autoStart]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -222,7 +232,9 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
 
             {!isScanning && !isStarting && (
               <p className="text-muted-foreground text-center text-sm">
-                Tap "Start Scanner" and allow camera access when prompted
+                {autoStart
+                  ? "Allow camera access when prompted to scan QR codes"
+                  : "Tap \"Start Scanner\" and allow camera access when prompted"}
               </p>
             )}
 

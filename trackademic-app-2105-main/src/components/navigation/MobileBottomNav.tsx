@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { BookOpen, Bell, User } from "lucide-react";
+import { BookOpen, Bell, User, FileBarChart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -38,24 +38,30 @@ const MobileBottomNav = () => {
       ? "/parent-dashboard"
       : "/student-dashboard";
 
-  const navItems = [
-    { icon: BookOpen, label: "Courses", path: basePath },
-    { icon: Bell, label: "Alerts", path: `${basePath}/alerts`, isBell: true },
-    { icon: User, label: "Profile", path: `${basePath}/profile` },
-  ];
+  const navItems = role === "student"
+    ? [
+        { icon: BookOpen, label: "Courses", path: "/student-dashboard", exact: true },
+        { icon: Bell, label: "Alert", path: "/student-dashboard/alerts" },
+        { icon: FileBarChart, label: "Scores", path: "/student-dashboard/scores" },
+        { icon: User, label: "Profile", path: "/student-dashboard/profile" },
+      ]
+    : [
+        { icon: BookOpen, label: "Courses", path: `${basePath}`, exact: true },
+        { icon: Bell, label: "Alert", path: `${basePath}/alerts` },
+        { icon: FileBarChart, label: "Scores", path: `${basePath}/scores` },
+        { icon: User, label: "Profile", path: `${basePath}/profile` },
+      ];
 
-  const isActive = (path: string, label: string) => {
-    if (label === "Courses") {
-      return location.pathname === basePath;
-    }
-    return location.pathname === path;
+  const isActive = (path: string, exact?: boolean) => {
+    if (exact) return location.pathname === path;
+    return location.pathname === path || location.pathname.startsWith(path + "/");
   };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.08] bg-[hsl(222,45%,9%)]/95 backdrop-blur-xl sm:hidden shadow-[0_-4px_24px_rgba(0,0,0,0.3)]">
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => {
-          const active = isActive(item.path, item.label);
+          const active = isActive(item.path, "exact" in item ? item.exact : undefined);
           return (
             <button
               key={item.label}
@@ -67,11 +73,6 @@ const MobileBottomNav = () => {
               )}
             >
               <item.icon className="h-5 w-5" />
-              {item.isBell && unreadCount > 0 && (
-                <span className="absolute top-2 right-1/2 translate-x-4 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground px-1 shadow-lg shadow-accent/30">
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </span>
-              )}
               <span className="text-[10px] font-medium">{item.label}</span>
             </button>
           );

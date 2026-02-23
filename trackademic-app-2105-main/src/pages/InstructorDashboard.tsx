@@ -33,11 +33,11 @@ const InstructorDashboard = () => {
 
     checkAuth();
 
-    // Listen for auth changes
+    // Listen for auth changes - only redirect on explicit sign-out, not on token refresh
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT' || !session) {
+      if (event === "SIGNED_OUT") {
         navigate("/");
-      } else {
+      } else if (session) {
         setUser(session.user);
       }
     });

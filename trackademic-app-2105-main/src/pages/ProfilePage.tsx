@@ -61,8 +61,13 @@ export default function ProfilePage() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) navigate("/");
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      // Only redirect on explicit sign-out; avoid redirecting during token refresh or transient null
+      if (event === "SIGNED_OUT") {
+        navigate("/");
+      } else if (session) {
+        setUser(session.user);
+      }
     });
 
     return () => subscription.unsubscribe();

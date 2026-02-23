@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, BookOpen, FileText, QrCode, ClipboardList } from "lucide-react";
+import { ArrowLeft, BookOpen, FileText, QrCode, ClipboardList, FileBarChart } from "lucide-react";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
 import QRScanner from "@/components/student/QRScanner";
 import AttendanceHistoryList from "@/components/instructor/AttendanceHistoryList";
@@ -127,7 +127,7 @@ export default function StudentCourseDashboard() {
         )}
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Button
             variant="outline"
             size="lg"
@@ -154,6 +154,15 @@ export default function StudentCourseDashboard() {
           >
             <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
             <span>Activities</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => navigate(`/student-dashboard/course/${courseId}/scores`)}
+            className="h-auto py-4 sm:py-6 flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm"
+          >
+            <FileBarChart className="h-5 w-5 sm:h-6 sm:w-6" />
+            <span>Scores</span>
           </Button>
         </div>
       </div>

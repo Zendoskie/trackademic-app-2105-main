@@ -38,7 +38,7 @@ const AttendanceHistoryList = ({ courseId, studentId, studentName }: AttendanceH
           marked_at,
           time_in,
           time_out,
-          profiles!attendance_student_id_fkey (
+          profiles (
             full_name
           )
         `)
@@ -51,6 +51,7 @@ const AttendanceHistoryList = ({ courseId, studentId, studentName }: AttendanceH
       const { data, error } = await query.order('marked_at', { ascending: false });
 
       if (error) {
+        console.error("Error fetching attendance history:", error);
         toast({
           title: "Error",
           description: "Failed to fetch attendance history.",
@@ -110,7 +111,7 @@ const AttendanceHistoryList = ({ courseId, studentId, studentName }: AttendanceH
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">
-                {record.profiles?.full_name || 'Unknown Student'}
+                {record.profiles?.full_name || record.student_id}
               </p>
               <p className="text-xs text-muted-foreground">
                 {new Date(record.marked_at).toLocaleDateString('en-US', { 
@@ -120,21 +121,15 @@ const AttendanceHistoryList = ({ courseId, studentId, studentName }: AttendanceH
                   day: 'numeric' 
                 })}
               </p>
-              {(record.time_in || record.time_out) && (
-                <p className="text-xs text-muted-foreground">
-                  {record.time_in && (
-                    <span>
-                      Time In: {new Date(record.time_in).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  )}
-                  {record.time_in && record.time_out && ' | '}
-                  {record.time_out && (
-                    <span>
-                      Time Out: {new Date(record.time_out).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  )}
-                </p>
-              )}
+              <p className="text-xs text-muted-foreground">
+                <span>
+                  Time In: {record.time_in ? new Date(record.time_in).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--'}
+                </span>
+                {' | '}
+                <span>
+                  Time Out: {record.time_out ? new Date(record.time_out).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--'}
+                </span>
+              </p>
             </div>
           </div>
           <Badge 

@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import StudentDashboard from "./pages/StudentDashboard";
 import ParentDashboard from "./pages/ParentDashboard";
@@ -12,6 +12,8 @@ import ParentStudentAttendanceDashboard from "./pages/ParentStudentAttendanceDas
 import ParentStudentActivitiesDashboard from "./pages/ParentStudentActivitiesDashboard";
 import StudentCourseDashboard from "./pages/StudentCourseDashboard";
 import StudentActivitiesDashboard from "./pages/StudentActivitiesDashboard";
+import StudentScoresDashboard from "./pages/StudentScoresDashboard";
+import StudentScoresOverview from "./pages/StudentScoresOverview";
 import StudentAttendanceHistoryDashboard from "./pages/StudentAttendanceHistoryDashboard";
 import StudentQRScannerDashboard from "./pages/StudentQRScannerDashboard";
 import InstructorDashboard from "./pages/InstructorDashboard";
@@ -38,13 +40,16 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/student-dashboard" element={<StudentDashboard />} />
+          <Route path="/student-dashboard/scores" element={<StudentScoresOverview />} />
           <Route path="/student-dashboard/alerts" element={<AlertsPage />} />
           <Route path="/student-dashboard/profile" element={<ProfilePage />} />
           <Route path="/student-dashboard/course/:courseId" element={<StudentCourseDashboard />} />
           <Route path="/student-dashboard/course/:courseId/attendance" element={<StudentAttendanceHistoryDashboard />} />
           <Route path="/student-dashboard/course/:courseId/qr-scanner" element={<StudentQRScannerDashboard />} />
           <Route path="/student-dashboard/course/:courseId/activities" element={<StudentActivitiesDashboard />} />
+          <Route path="/student-dashboard/course/:courseId/scores" element={<StudentScoresDashboard />} />
           <Route path="/instructor-dashboard" element={<InstructorDashboard />} />
+          <Route path="/instructor-dashboard/scores" element={<Navigate to="/instructor-dashboard" replace />} />
           <Route path="/instructor-dashboard/alerts" element={<AlertsPage />} />
           <Route path="/instructor-dashboard/profile" element={<ProfilePage />} />
           <Route path="/instructor-dashboard/course/:courseId" element={<CourseDashboard />} />
@@ -56,6 +61,7 @@ const App = () => (
           <Route path="/instructor-dashboard/course/:courseId/submissions" element={<SubmissionsDashboardPage />} />
           <Route path="/instructor-dashboard/course/:courseId/sessions" element={<SessionDashboard />} />
           <Route path="/parent-dashboard" element={<ParentDashboard />} />
+          <Route path="/parent-dashboard/scores" element={<Navigate to="/parent-dashboard" replace />} />
           <Route path="/parent-dashboard/alerts" element={<AlertsPage />} />
           <Route path="/parent-dashboard/profile" element={<ProfilePage />} />
           <Route path="/parent-dashboard/student/:studentId" element={<ParentStudentView />} />
