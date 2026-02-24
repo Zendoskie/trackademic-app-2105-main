@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, LogOut, Palette, Info } from "lucide-react";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
+import ThemeToggle from "@/components/shared/ThemeToggle";
 
 export default function SettingsPage() {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function SettingsPage() {
               <CardDescription>Customize the look and feel of the app.</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">Theme selection is coming soon.</p>
+              <ThemeToggle />
             </CardContent>
           </Card>
 
