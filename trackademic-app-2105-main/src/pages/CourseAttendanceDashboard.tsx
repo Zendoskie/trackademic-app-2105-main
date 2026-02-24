@@ -1,23 +1,20 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import EnrolledStudentsList from "@/components/instructor/EnrolledStudentsList";
+import { ArrowLeft, ClipboardList } from "lucide-react";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
+import AttendanceCard from "@/components/shared/AttendanceCard";
 
 interface Course {
   id: string;
   title: string;
-  description: string | null;
-  course_code: string | null;
-  created_at: string;
 }
 
-const CourseAttendanceDashboard = () => {
-  const { courseId } = useParams();
+export default function CourseAttendanceDashboard() {
+  const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [course, setCourse] = useState<Course | null>(null);
@@ -25,36 +22,25 @@ const CourseAttendanceDashboard = () => {
 
   useEffect(() => {
     const fetchCourse = async () => {
-      if (!courseId) {
-        navigate("/instructor-dashboard");
-        return;
-      }
+      if (!courseId) return;
 
       try {
         const { data, error } = await supabase
           .from('courses')
-          .select('id, title, description, course_code, created_at')
+          .select('id, title')
           .eq('id', courseId)
-          .maybeSingle();
+          .single();
 
-        if (error || !data) {
-          toast({
-            title: "Error",
-            description: "Course not found.",
-            variant: "destructive",
-          });
-          navigate("/instructor-dashboard");
-          return;
-        }
-
+        if (error) throw error;
         setCourse(data);
       } catch (error) {
+        console.error('Error fetching course:', error);
         toast({
           title: "Error",
-          description: "An unexpected error occurred.",
+          description: "Failed to load course details.",
           variant: "destructive",
         });
-        navigate("/instructor-dashboard");
+        navigate('/instructor-dashboard');
       } finally {
         setLoading(false);
       }
@@ -65,8 +51,11 @@ const CourseAttendanceDashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="trackademic-container flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading attendance history...</p>
+        </div>
       </div>
     );
   }
@@ -86,40 +75,35 @@ const CourseAttendanceDashboard = () => {
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Course Dashboard
+            Back to Course
           </Button>
-          <div className="flex items-start justify-between">
+          <div className="flex items-start gap-4">
+            <ClipboardList className="h-8 w-8 text-primary flex-shrink-0 mt-1" />
             <div>
-              <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-                <BookOpen className="h-8 w-8 text-primary" />
-                {course.title} - Attendance History
+              <h1 className="text-3xl font-bold mb-2">
+                Attendance History
               </h1>
               <p className="text-muted-foreground">
-                Select a student to view their attendance history
+                {course.title}
               </p>
             </div>
           </div>
         </div>
 
+        {/* Attendance History Card */}
         <Card className="trackademic-card">
           <CardHeader>
-            <CardTitle>Select a Student</CardTitle>
+            <CardTitle>All Attendance Records</CardTitle>
+            <CardDescription>
+              Viewing all attendance records for this course
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <EnrolledStudentsList 
-              courseId={course.id} 
-              courseName={course.title}
-              compact={true}
-              onStudentClick={(studentId) => {
-                navigate(`/instructor-dashboard/course/${courseId}/attendance/${studentId}`);
-              }}
-            />
+            <AttendanceCard courseId={courseId!} />
           </CardContent>
         </Card>
       </div>
       <MobileBottomNav />
     </div>
   );
-};
-
-export default CourseAttendanceDashboard;
+}

@@ -29,26 +29,17 @@ const AttendanceHistoryList = ({ courseId, studentId, studentName }: AttendanceH
 
   const fetchAttendanceHistory = async () => {
     try {
+      // Select attendance only first (avoids join/RLS issues with profiles)
       let query = supabase
         .from('attendance')
-        .select(`
-          id,
-          student_id,
-          status,
-          marked_at,
-          time_in,
-          time_out,
-          profiles (
-            full_name
-          )
-        `)
+        .select('id, student_id, status, marked_at, time_in, time_out')
         .eq('course_id', courseId);
-      
+
       if (studentId) {
         query = query.eq('student_id', studentId);
       }
-      
-      const { data, error } = await query.order('marked_at', { ascending: false });
+
+      const { data: attendanceData, error } = await query.order('marked_at', { ascending: false });
 
       if (error) {
         console.error("Error fetching attendance history:", error);
@@ -60,7 +51,29 @@ const AttendanceHistoryList = ({ courseId, studentId, studentName }: AttendanceH
         return;
       }
 
-      setAttendanceRecords((data as AttendanceRecord[]) || []);
+      const records = (attendanceData || []) as Omit<AttendanceRecord, 'profiles'>[];
+      if (records.length === 0) {
+        setAttendanceRecords([]);
+        return;
+      }
+
+      // Fetch profile names for displayed students (single batch)
+      const studentIds = [...new Set(records.map((r) => r.student_id))];
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', studentIds);
+
+      const profileMap = new Map(
+        (profilesData || []).map((p) => [p.id, { full_name: p.full_name }])
+      );
+
+      const recordsWithProfiles: AttendanceRecord[] = records.map((r) => ({
+        ...r,
+        profiles: profileMap.get(r.student_id) || null,
+      }));
+
+      setAttendanceRecords(recordsWithProfiles);
     } catch (error) {
       toast({
         title: "Error",
@@ -74,6 +87,7 @@ const AttendanceHistoryList = ({ courseId, studentId, studentName }: AttendanceH
 
   useEffect(() => {
     fetchAttendanceHistory();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId, studentId]);
 
   if (loading) {
@@ -94,9 +108,27 @@ const AttendanceHistoryList = ({ courseId, studentId, studentName }: AttendanceH
     );
   }
 
+  // Only show records that have both time in and time out (actual times, no placeholders)
+  const recordsWithTimes = attendanceRecords.filter(
+    (r) => r.time_in != null && r.time_out != null
+  );
+
+  if (recordsWithTimes.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-sm text-muted-foreground">
+          No attendance with both time in and time out yet. Students need to scan the QR twice (once to time in, once to time out).
+        </p>
+      </div>
+    );
+  }
+
+  const formatTime = (iso: string) =>
+    new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
   return (
     <div className="space-y-3">
-      {attendanceRecords.map((record) => (
+      {recordsWithTimes.map((record) => (
         <div
           key={record.id}
           className="flex items-center justify-between gap-3 p-3 rounded-lg border bg-card"
@@ -114,25 +146,21 @@ const AttendanceHistoryList = ({ courseId, studentId, studentName }: AttendanceH
                 {record.profiles?.full_name || record.student_id}
               </p>
               <p className="text-xs text-muted-foreground">
-                {new Date(record.marked_at).toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
+                {new Date(record.marked_at).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
                 })}
               </p>
-              <p className="text-xs text-muted-foreground">
-                <span>
-                  Time In: {record.time_in ? new Date(record.time_in).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--'}
-                </span>
-                {' | '}
-                <span>
-                  Time Out: {record.time_out ? new Date(record.time_out).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--'}
-                </span>
-              </p>
+              <div className="text-xs text-muted-foreground flex gap-2">
+                <span>Time In: {formatTime(record.time_in!)}</span>
+                <span>|</span>
+                <span>Time Out: {formatTime(record.time_out!)}</span>
+              </div>
             </div>
           </div>
-          <Badge 
+          <Badge
             variant={record.status === 'present' ? 'default' : 'destructive'}
             className="flex-shrink-0"
           >

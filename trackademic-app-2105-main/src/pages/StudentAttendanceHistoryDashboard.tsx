@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, ClipboardList } from "lucide-react";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
-import AttendanceHistoryList from "@/components/instructor/AttendanceHistoryList";
+import AttendanceCard from "@/components/shared/AttendanceCard";
 
 interface Course {
   id: string;
@@ -16,7 +16,7 @@ interface Course {
 }
 
 export default function StudentAttendanceHistoryDashboard() {
-  const { courseId } = useParams();
+  const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [course, setCourse] = useState<Course | null>(null);
@@ -24,11 +24,10 @@ export default function StudentAttendanceHistoryDashboard() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchCourse = async () => {
+    const fetchCourseAndUser = async () => {
       if (!courseId) return;
 
       try {
-        // Get current user
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           setCurrentUserId(user.id);
@@ -52,7 +51,7 @@ export default function StudentAttendanceHistoryDashboard() {
 
         setCourse(data);
       } catch (error) {
-        console.error('Error fetching course:', error);
+        console.error('Error fetching data:', error);
         toast({
           title: "Error",
           description: "An unexpected error occurred",
@@ -64,7 +63,7 @@ export default function StudentAttendanceHistoryDashboard() {
       }
     };
 
-    fetchCourse();
+    fetchCourseAndUser();
   }, [courseId, navigate, toast]);
 
   if (loading) {
@@ -117,9 +116,9 @@ export default function StudentAttendanceHistoryDashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {currentUserId && (
-              <AttendanceHistoryList 
-                courseId={courseId!} 
+            {currentUserId && courseId && (
+              <AttendanceCard
+                courseId={courseId}
                 studentId={currentUserId}
               />
             )}

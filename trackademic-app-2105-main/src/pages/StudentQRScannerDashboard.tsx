@@ -195,12 +195,14 @@ export default function StudentQRScannerDashboard() {
                   return;
                 }
 
-                // Check for existing attendance record for this session
+                // Find existing attendance for this session (any) so we can update time_out or avoid duplicates
                 const { data: existingAttendance, error: fetchError } = await supabase
                   .from('attendance')
                   .select('id, time_out')
                   .eq('session_id', qrData.sessionId)
                   .eq('student_id', user.id)
+                  .order('time_in', { ascending: false })
+                  .limit(1)
                   .maybeSingle();
 
                 if (fetchError) {

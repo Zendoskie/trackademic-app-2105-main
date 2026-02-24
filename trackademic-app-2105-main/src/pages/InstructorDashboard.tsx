@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { BookOpen, LogOut } from "lucide-react";
-import NotificationBell from "@/components/notifications/NotificationBell";
+import { BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import CreateCourseDialog from "@/components/instructor/CreateCourseDialog";
@@ -45,23 +43,6 @@ const InstructorDashboard = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleSignOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast({
-        title: "Signed out",
-        description: "You have been successfully signed out.",
-      });
-      navigate("/");
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleCourseCreated = () => {
     setRefreshTrigger(prev => prev + 1);
   };
@@ -78,22 +59,13 @@ const InstructorDashboard = () => {
     <div className="trackademic-container">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
-          <div>
-            <h1 className="trackademic-brand text-2xl sm:text-3xl mb-1">
-              TRACKADEMIC
-            </h1>
-            <p className="text-muted-foreground text-xs sm:text-sm">
-              Welcome back, {user?.user_metadata?.full_name || "Instructor"}!
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <NotificationBell />
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Sign Out</span>
-            </Button>
-          </div>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="trackademic-brand text-2xl sm:text-3xl mb-1">
+            TRACKADEMIC
+          </h1>
+          <p className="text-muted-foreground text-xs sm:text-sm">
+            Welcome back, {user?.user_metadata?.full_name || "Instructor"}!
+          </p>
         </div>
 
         {/* Dashboard Content */}

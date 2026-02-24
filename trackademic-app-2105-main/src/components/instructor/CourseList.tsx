@@ -3,9 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BookOpen, Edit3, Check, X, Copy } from "lucide-react";
+import { BookOpen, Edit3, Check, X, Copy, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Course {
   id: string;
@@ -25,6 +35,8 @@ const CourseList = ({ refreshTrigger }: CourseListProps) => {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
+  const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const { toast } = useToast();
 
   const fetchCourses = async () => {
@@ -146,6 +158,40 @@ const CourseList = ({ refreshTrigger }: CourseListProps) => {
     }
   };
 
+  const handleDeleteCourse = async () => {
+    if (!courseToDelete) return;
+    setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("courses")
+        .delete()
+        .eq("id", courseToDelete.id);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to delete course.",
+          variant: "destructive",
+        });
+        return;
+      }
+      toast({
+        title: "Course deleted",
+        description: `"${courseToDelete.title}" has been removed.`,
+      });
+      setCourses(courses.filter((c) => c.id !== courseToDelete.id));
+      setCourseToDelete(null);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -224,6 +270,17 @@ const CourseList = ({ refreshTrigger }: CourseListProps) => {
                       >
                         <Edit3 className="h-3 w-3" />
                       </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCourseToDelete(course);
+                        }}
+                        className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
                     </div>
                     {course.course_code && (
                       <div className="flex items-center gap-2 mt-1">
@@ -255,6 +312,30 @@ const CourseList = ({ refreshTrigger }: CourseListProps) => {
           )}
         </Card>
       ))}
+
+      <AlertDialog open={!!courseToDelete} onOpenChange={(open) => !open && setCourseToDelete(null)}>
+        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete course?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete "{courseToDelete?.title}" and all associated data (enrollments, attendance, sessions, activities). This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleDeleteCourse();
+              }}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

@@ -5,8 +5,7 @@ import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Users, ChevronRight } from "lucide-react";
-import NotificationBell from "@/components/notifications/NotificationBell";
+import { Users, ChevronRight } from "lucide-react";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
 
 interface LinkedStudent {
@@ -74,17 +73,6 @@ export default function ParentDashboard() {
     }
   };
 
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast({
-        title: "Error signing out",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleViewStudent = (studentId: string) => {
     navigate(`/parent-dashboard/student/${studentId}`);
   };
@@ -115,24 +103,10 @@ export default function ParentDashboard() {
     <div className="trackademic-container">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
-          <div>
-            <h1 className="trackademic-brand text-2xl sm:text-3xl mb-1 sm:mb-2">TRACKADEMIC</h1>
-            <h2 className="text-foreground text-lg sm:text-xl">Welcome back, {userName}!</h2>
-            <p className="text-muted-foreground text-sm sm:text-base">Monitor your student's academic progress</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <NotificationBell />
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleSignOut}
-              className="gap-2"
-            >
-              <LogOut size={16} />
-              <span className="hidden sm:inline">Sign Out</span>
-            </Button>
-          </div>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="trackademic-brand text-2xl sm:text-3xl mb-1 sm:mb-2">TRACKADEMIC</h1>
+          <h2 className="text-foreground text-lg sm:text-xl">Welcome back, {userName}!</h2>
+          <p className="text-muted-foreground text-sm sm:text-base">Monitor your student's academic progress</p>
         </div>
 
         {/* Dashboard Content */}
