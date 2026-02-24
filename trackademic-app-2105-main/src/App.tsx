@@ -27,6 +27,7 @@ import SubmissionsDashboardPage from "./pages/SubmissionsDashboard";
 import SessionDashboard from "./pages/SessionDashboard";
 import AlertsPage from "./pages/AlertsPage";
 import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/student-dashboard/scores" element={<StudentScoresOverview />} />
           <Route path="/student-dashboard/alerts" element={<AlertsPage />} />
           <Route path="/student-dashboard/profile" element={<ProfilePage />} />
+          <Route path="/student-dashboard/settings" element={<SettingsPage />} />
           <Route path="/student-dashboard/course/:courseId" element={<StudentCourseDashboard />} />
           <Route path="/student-dashboard/course/:courseId/attendance" element={<StudentAttendanceHistoryDashboard />} />
           <Route path="/student-dashboard/course/:courseId/qr-scanner" element={<StudentQRScannerDashboard />} />

@@ -78,7 +78,13 @@ export default function StudentAttendanceHistoryDashboard() {
   }
 
   if (!course) {
-    return null;
+    return (
+      <div className="trackademic-container flex items-center justify-center min-h-[40vh]">
+        <div className="text-center">
+          <p className="text-muted-foreground">Unable to load course. Redirecting...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { BookOpen, Bell, User, FileBarChart } from "lucide-react";
+import { BookOpen, Bell, User, Settings, FileBarChart } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -76,8 +76,8 @@ const MobileBottomNav = () => {
     ? [
         { icon: BookOpen, label: "Courses", path: "/student-dashboard", exact: true },
         { icon: Bell, label: "Notification", path: "/student-dashboard/alerts", showUnread: true },
-        { icon: FileBarChart, label: "Scores", path: "/student-dashboard/scores" },
         { icon: User, label: "Profile", path: "/student-dashboard/profile" },
+        { icon: Settings, label: "Settings", path: "/student-dashboard/settings" },
       ]
     : [
         { icon: BookOpen, label: "Courses", path: `${basePath}`, exact: true },
@@ -92,7 +92,7 @@ const MobileBottomNav = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.08] bg-[hsl(222,45%,9%)]/95 backdrop-blur-xl sm:hidden shadow-[0_-4px_24px_rgba(0,0,0,0.3)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-xl sm:hidden shadow-[0_-4px_24px_rgba(0,0,0,0.15)]">
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => {
           const active = isActive(item.path, "exact" in item ? item.exact : undefined);

@@ -23,6 +23,14 @@
   </head>
 
   <body>
+    <script>
+      (function() {
+        var t = localStorage.getItem('trackademic-theme');
+        if (t === 'light') document.documentElement.classList.add('light');
+        else if (t === 'dark' || !t) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.add(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

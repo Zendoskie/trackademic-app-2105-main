@@ -8,6 +8,7 @@ import { ArrowLeft, BookOpen } from "lucide-react";
 import QRScanner from "@/components/student/QRScanner";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
 import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Schema validation for QR code data
 const QRSessionJoinSchema = z.object({
@@ -37,9 +38,10 @@ interface Course {
 }
 
 export default function StudentQRScannerDashboard() {
-  const { courseId } = useParams();
+  const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -54,22 +56,13 @@ export default function StudentQRScannerDashboard() {
           .eq('id', courseId)
           .single();
 
-        if (error) {
-          toast({
-            title: "Error",
-            description: "Failed to load course details",
-            variant: "destructive",
-          });
-          navigate('/student-dashboard');
-          return;
-        }
-
+        if (error) throw error;
         setCourse(data);
       } catch (error) {
         console.error('Error fetching course:', error);
         toast({
           title: "Error",
-          description: "An unexpected error occurred",
+          description: "Failed to load course details",
           variant: "destructive",
         });
         navigate('/student-dashboard');
@@ -132,237 +125,71 @@ export default function StudentQRScannerDashboard() {
             <QRScanner
               autoStart
               onScanSuccess={async (decodedText) => {
-              // Get current user first
               const { data: { user } } = await supabase.auth.getUser();
               if (!user) {
-                toast({
-                  title: "Error",
-                  description: "You must be logged in.",
-                  variant: "destructive",
-                });
+                toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
                 return;
               }
 
-              // Try to parse and validate QR code as JSON with schema validation
+              const invalidateAttendanceQueries = (cId: string) => {
+                queryClient.invalidateQueries({ queryKey: ['attendance', cId, user.id] });
+                queryClient.invalidateQueries({ queryKey: ['attendance', cId, undefined] });
+              };
+
               let qrData: QRData | null = null;
               try {
                 const parsed = JSON.parse(decodedText);
                 const validated = QRDataSchema.safeParse(parsed);
-                if (validated.success) {
-                  qrData = validated.data;
-                }
-              } catch {
-                // Not valid JSON, will handle as legacy QR below
-              }
+                if (validated.success) qrData = validated.data;
+              } catch {}
 
-              // UNIFIED LOGIC FOR SESSION JOIN & ATTENDANCE
               if (qrData && (qrData.type === 'session_join' || qrData.type === 'session_attendance')) {
                 const now = new Date().toISOString();
+                const attendanceCourseId = qrData.courseId || courseId!;
 
-                // Step 1: Ensure student is in session_participants and marked as present
-                const { data: participationData, error: participationError } = await supabase
-                  .from('session_participants')
-                  .upsert({
-                    session_id: qrData.sessionId,
-                    student_id: user.id,
-                    marked_present: true,
-                    marked_present_at: now,
-                  }, { onConflict: 'session_id, student_id' })
-                  .select('joined_at')
-                  .single();
+                await supabase.from('session_participants').upsert({ session_id: qrData.sessionId, student_id: user.id, marked_present: true, marked_present_at: now }, { onConflict: 'session_id, student_id' });
 
-                if (participationError) {
-                  console.error('Error upserting session participation:', participationError);
-                  toast({
-                    title: "Error",
-                    description: "Failed to verify session participation.",
-                    variant: "destructive",
-                  });
-                  return;
-                }
+                const { data: existing } = await supabase.from('attendance').select('id, time_out').eq('session_id', qrData.sessionId).eq('student_id', user.id).maybeSingle();
 
-                const timeIn = participationData?.joined_at || now;
-
-                // Step 2: Record/Update attendance in 'attendance' table
-                const attendanceCourseId = qrData.courseId || courseId;
-                if (!attendanceCourseId) {
-                  console.error('No courseId available for attendance record');
-                  toast({
-                    title: "Error",
-                    description: "Could not determine the course for the attendance record.",
-                    variant: "destructive",
-                  });
-                  return;
-                }
-
-                // Find existing attendance for this session (any) so we can update time_out or avoid duplicates
-                const { data: existingAttendance, error: fetchError } = await supabase
-                  .from('attendance')
-                  .select('id, time_out')
-                  .eq('session_id', qrData.sessionId)
-                  .eq('student_id', user.id)
-                  .order('time_in', { ascending: false })
-                  .limit(1)
-                  .maybeSingle();
-
-                if (fetchError) {
-                  console.error('Error fetching existing attendance record:', fetchError);
-                  toast({
-                    title: "Error",
-                    description: "Could not verify your attendance status. Please try again.",
-                    variant: "destructive",
-                  });
-                  return;
-                }
-
-                if (existingAttendance) {
-                  // Record exists - update time_out if not yet set
-                  if (existingAttendance.time_out) {
-                    toast({
-                      title: "Already Timed Out",
-                      description: "You have already timed in and out for this session.",
-                    });
-                    return;
-                  }
-
-                  const { error: updateError } = await supabase
-                    .from('attendance')
-                    .update({ time_out: now })
-                    .eq('id', existingAttendance.id);
-
-                  if (updateError) {
-                    console.error('Error recording time out:', updateError);
-                    toast({
-                      title: "Error",
-                      description: "Failed to record your time out.",
-                      variant: "destructive",
-                    });
+                if (existing) {
+                  if (existing.time_out) {
+                    toast({ title: "Already Timed Out", description: "You have already timed in and out for this session." });
                   } else {
-                    toast({
-                      title: "Time Out Recorded",
-                      description: "Your time out has been recorded.",
-                    });
+                    const { error } = await supabase.from('attendance').update({ time_out: now }).eq('id', existing.id);
+                    if (!error) {
+                      toast({ title: "Time Out Recorded", description: "Your time out has been recorded." });
+                      invalidateAttendanceQueries(attendanceCourseId);
+                    }
                   }
                 } else {
-                  // No record exists, this is a time-in action
-                  const { error: insertError } = await supabase
-                    .from('attendance')
-                    .insert({
-                      course_id: attendanceCourseId,
-                      student_id: user.id,
-                      session_id: qrData.sessionId,
-                      status: 'present',
-                      time_in: timeIn,
-                      time_out: null, // Set time_out to null initially
-                      marked_at: now,
-                    });
-
-                  if (insertError) {
-                    console.error('Error recording time in:', insertError);
-                    toast({
-                      title: "Error",
-                      description: "Failed to record your attendance.",
-                      variant: "destructive",
-                    });
-                  } else {
-                    toast({
-                      title: "Time In Recorded",
-                      description: "You have successfully timed in. Scan again to time out.",
-                    });
+                  const { error } = await supabase.from('attendance').insert({ course_id: attendanceCourseId, student_id: user.id, session_id: qrData.sessionId, status: 'present', time_in: now, marked_at: now });
+                  if (!error) {
+                    toast({ title: "Time In Recorded", description: "You have successfully timed in. Scan again to time out." });
+                    invalidateAttendanceQueries(attendanceCourseId);
                   }
                 }
                 return;
               }
 
-              // Handle legacy QR code format
-              if (!decodedText.startsWith('student-')) {
-                toast({
-                  title: "Invalid QR Code",
-                  description: "This QR code is not recognized.",
-                  variant: "destructive",
-                });
-                return;
-              }
+              if (decodedText.startsWith('student-') && course.course_code === decodedText.replace('student-', '')) {
+                const now = new Date().toISOString();
+                const { data: existing } = await supabase.from('attendance').select('id').eq('course_id', course.id).eq('student_id', user.id).is('time_out', null).maybeSingle();
 
-              const scannedCourseCode = decodedText.replace('student-', '');
-              
-              if (course.course_code !== scannedCourseCode) {
-                toast({
-                  title: "Wrong Course",
-                  description: "This QR code is for a different course.",
-                  variant: "destructive",
-                });
-                return;
-              }
-
-              const now = new Date().toISOString();
-
-              // Check for existing 'open' attendance record for this course
-              const { data: existingAttendance, error: fetchError } = await supabase
-                .from('attendance')
-                .select('id')
-                .eq('course_id', course.id)
-                .eq('student_id', user.id)
-                .is('time_out', null)
-                .order('time_in', { ascending: false })
-                .maybeSingle();
-
-              if (fetchError) {
-                console.error('Error fetching existing legacy attendance record:', fetchError);
-                toast({
-                  title: "Error",
-                  description: "Could not verify your attendance status. Please try again.",
-                  variant: "destructive",
-                });
-                return;
-              }
-
-              if (existingAttendance) {
-                // Record exists, this is a time-out action
-                const { error: updateError } = await supabase
-                  .from('attendance')
-                  .update({ time_out: now })
-                  .eq('id', existingAttendance.id);
-
-                if (updateError) {
-                  console.error('Error timing out (legacy):', updateError);
-                  toast({
-                    title: "Error",
-                    description: "Failed to record your time-out.",
-                    variant: "destructive",
-                  });
+                if (existing) {
+                  const { error } = await supabase.from('attendance').update({ time_out: now }).eq('id', existing.id);
+                  if (!error) {
+                    toast({ title: "Time Out Recorded", description: "You have successfully timed out." });
+                    invalidateAttendanceQueries(course.id);
+                  }
                 } else {
-                  toast({
-                    title: "Time Out Recorded",
-                    description: "You have successfully timed out.",
-                  });
+                  const { error } = await supabase.from('attendance').insert({ student_id: user.id, course_id: course.id, status: 'present', marked_at: now, time_in: now });
+                  if (!error) {
+                    toast({ title: "Time In Recorded", description: "You have successfully timed in. Scan again to time out." });
+                    invalidateAttendanceQueries(course.id);
+                  }
                 }
               } else {
-                // No open record exists, this is a time-in action
-                const { error: insertError } = await supabase
-                  .from('attendance')
-                  .insert({
-                    student_id: user.id,
-                    course_id: course.id,
-                    status: 'present',
-                    marked_at: now,
-                    time_in: now,
-                    time_out: null, // Set time_out to null initially
-                  });
-
-                if (insertError) {
-                  console.error('Error recording attendance (legacy):', insertError);
-                  toast({
-                    title: "Error",
-                    description: "Failed to record attendance.",
-                    variant: "destructive",
-                  });
-                } else {
-                  toast({
-                    title: "Time In Recorded",
-                    description: "You have successfully timed in. Scan again to time out.",
-                  });
-                }
+                toast({ title: "Invalid QR Code", description: "This QR code is not for this course.", variant: "destructive" });
               }
             }}
             />

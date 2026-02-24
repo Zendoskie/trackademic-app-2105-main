@@ -54,13 +54,13 @@ export const useAttendanceHistory = (courseId: string, studentId?: string) => {
     return (data as AttendanceRecord[]) || [];
   };
 
-  const { data: attendanceRecords = [], isLoading, isError } = useQuery<AttendanceRecord[]>(
-    ['attendance', courseId, studentId],
-    fetchAttendanceHistory
-  );
+  const { data: attendanceRecords = [], isLoading, isError } = useQuery<AttendanceRecord[]>({
+    queryKey: ['attendance', courseId, studentId],
+    queryFn: fetchAttendanceHistory,
+  });
 
   const invalidateQuery = useCallback(() => {
-    queryClient.invalidateQueries(['attendance', courseId, studentId]);
+    queryClient.invalidateQueries({ queryKey: ['attendance', courseId, studentId] });
   }, [queryClient, courseId, studentId]);
 
   return { attendanceRecords, isLoading, isError, invalidateQuery };

@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, LogOut, User, Mail } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, User, Mail, Sun, Moon, Monitor } from "lucide-react";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
+import { useTheme, type Theme } from "@/contexts/ThemeContext";
+import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
@@ -18,7 +19,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const { toast } = useToast();
+
+  const { theme, setTheme } = useTheme();
 
   const basePath = location.pathname.startsWith("/instructor-dashboard")
     ? "/instructor-dashboard"
@@ -62,7 +64,6 @@ export default function ProfilePage() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      // Only redirect on explicit sign-out; avoid redirecting during token refresh or transient null
       if (event === "SIGNED_OUT") {
         navigate("/");
       } else if (session) {
@@ -72,23 +73,6 @@ export default function ProfilePage() {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
-
-  const handleSignOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast({
-        title: "Signed out",
-        description: "You have been successfully signed out.",
-      });
-      navigate("/");
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
 
   const getRoleLabel = (role: string | null) => {
     if (!role) return "User";
@@ -150,14 +134,34 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={handleSignOut}
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          Sign Out
-        </Button>
+        <Card className="trackademic-card mb-6">
+          <CardHeader>
+            <CardTitle className="text-base">Appearance</CardTitle>
+            <CardDescription>Choose light or dark mode for the app</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-2">
+              {(
+                [
+                  { value: "light" as Theme, label: "Light", icon: Sun },
+                  { value: "dark" as Theme, label: "Dark", icon: Moon },
+                  { value: "system" as Theme, label: "System", icon: Monitor },
+                ]
+              ).map(({ value, label, icon: Icon }) => (
+                <Button
+                  key={value}
+                  variant={theme === value ? "default" : "outline"}
+                  size="sm"
+                  className={cn("flex-1 gap-2", theme === value && "ring-2 ring-primary ring-offset-2 ring-offset-background")}
+                  onClick={() => setTheme(value)}
+                >
+                  <Icon className="h-4 w-4" />
+                  {label}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
       <MobileBottomNav />
     </div>

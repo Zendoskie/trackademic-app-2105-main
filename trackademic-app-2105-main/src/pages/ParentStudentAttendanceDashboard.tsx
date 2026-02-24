@@ -79,7 +79,11 @@ export default function ParentStudentAttendanceDashboard() {
   }
 
   if (!course || !student) {
-    return null;
+    return (
+      <div className="trackademic-container flex items-center justify-center min-h-[40vh]">
+        <p className="text-muted-foreground">Unable to load course or student.</p>
+      </div>
+    );
   }
 
   return (
