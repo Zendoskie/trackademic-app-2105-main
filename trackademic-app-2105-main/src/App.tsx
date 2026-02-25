@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import Index from "./pages/Index";
+import AuthPage from "./pages/AuthPage";
 import StudentDashboard from "./pages/StudentDashboard";
 import ParentDashboard from "./pages/ParentDashboard";
 import ParentStudentView from "./pages/ParentStudentView";
@@ -42,6 +43,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<AuthPage />} />
             <Route path="/student-dashboard" element={<StudentDashboard />} />
             <Route path="/student-dashboard/scores" element={<StudentScoresOverview />} />
             <Route path="/student-dashboard/alerts" element={<AlertsPage />} />

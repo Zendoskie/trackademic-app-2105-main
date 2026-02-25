@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Users, ChevronRight } from "lucide-react";
+import { ArrowLeft, Users, ChevronRight } from "lucide-react";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
 
 interface LinkedStudent {
@@ -103,10 +102,20 @@ export default function ParentDashboard() {
     <div className="trackademic-container">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="trackademic-brand text-2xl sm:text-3xl mb-1 sm:mb-2">TRACKADEMIC</h1>
-          <h2 className="text-foreground text-lg sm:text-xl">Welcome back, {userName}!</h2>
-          <p className="text-muted-foreground text-sm sm:text-base">Monitor your student's academic progress</p>
+        <div className="mb-6 sm:mb-8 space-y-3">
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm text-muted-foreground"
+            onClick={() => navigate("/")}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </button>
+          <div>
+            <h1 className="trackademic-brand text-2xl sm:text-3xl mb-1 sm:mb-2">Trackacademic</h1>
+            <h2 className="text-foreground text-lg sm:text-xl">Welcome back, {userName}!</h2>
+            <p className="text-muted-foreground text-sm sm:text-base">Monitor your student's academic progress</p>
+          </div>
         </div>
 
         {/* Dashboard Content */}

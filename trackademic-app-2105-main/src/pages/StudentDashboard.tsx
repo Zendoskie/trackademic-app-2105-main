@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { BookOpen } from "lucide-react";
+import { ArrowLeft, BookOpen } from "lucide-react";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
 
 interface EnrolledCourse {
@@ -181,10 +181,21 @@ export default function StudentDashboard() {
     <div className="trackademic-container">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="trackademic-brand text-2xl sm:text-3xl mb-1">TRACKADEMIC</h1>
-          <h2 className="text-foreground text-base sm:text-xl">Welcome back, {userName}!</h2>
-          <p className="text-muted-foreground text-xs sm:text-sm">Ready to continue your academic journey?</p>
+        <div className="mb-6 sm:mb-8 space-y-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/")}
+            className="inline-flex items-center gap-2 px-0 text-xs sm:text-sm"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <div>
+            <h1 className="trackademic-brand text-2xl sm:text-3xl mb-1">Trackacademic</h1>
+            <h2 className="text-foreground text-base sm:text-xl">Welcome back, {userName}!</h2>
+            <p className="text-muted-foreground text-xs sm:text-sm">Ready to continue your academic journey?</p>
+          </div>
         </div>
 
         {/* Dashboard Content */}
