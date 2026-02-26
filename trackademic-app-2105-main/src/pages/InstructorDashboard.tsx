@@ -79,7 +79,7 @@ const InstructorDashboard = () => {
         </div>
 
         {/* Dashboard Content */}
-        <div className="grid grid-cols-1 gap-6 mb-8">
+        <div className="grid grid-cols-1 gap-4 mb-8">
           {/* My Courses */}
           <Card className="trackademic-card">
             <CardHeader className="pb-3">
@@ -94,6 +94,27 @@ const InstructorDashboard = () => {
                 <CreateCourseDialog onCourseCreated={handleCourseCreated} />
                 <CourseList refreshTrigger={refreshTrigger} />
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Exam Scores */}
+          <Card className="trackademic-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">
+                Exam Scores
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-muted-foreground text-sm">
+                Record midterm and final examination scores for your students.
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate("/instructor-dashboard/scores")}
+                className="w-full inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm active:scale-[0.98]"
+              >
+                Open Exam Scores
+              </button>
             </CardContent>
           </Card>
         </div>

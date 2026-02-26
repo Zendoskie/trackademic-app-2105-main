@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import StudentDashboard from "./pages/StudentDashboard";
 import ParentDashboard from "./pages/ParentDashboard";
+import ParentScoresPage from "./pages/ParentScoresPage";
 import ParentStudentView from "./pages/ParentStudentView";
 import ParentStudentCourseDashboard from "./pages/ParentStudentCourseDashboard";
 import ParentStudentAttendanceDashboard from "./pages/ParentStudentAttendanceDashboard";
@@ -19,6 +20,7 @@ import StudentScoresOverview from "./pages/StudentScoresOverview";
 import StudentAttendanceHistoryDashboard from "./pages/StudentAttendanceHistoryDashboard";
 import StudentQRScannerDashboard from "./pages/StudentQRScannerDashboard";
 import InstructorDashboard from "./pages/InstructorDashboard";
+import InstructorScoresPage from "./pages/InstructorScoresPage";
 import CourseDashboard from "./pages/CourseDashboard";
 import CourseStudentsDashboard from "./pages/CourseStudentsDashboard";
 import CourseAttendanceDashboard from "./pages/CourseAttendanceDashboard";
@@ -57,7 +59,7 @@ const App = () => (
             <Route path="/student-dashboard/course/:courseId/activities" element={<StudentActivitiesDashboard />} />
             <Route path="/student-dashboard/course/:courseId/scores" element={<StudentScoresDashboard />} />
             <Route path="/instructor-dashboard" element={<InstructorDashboard />} />
-            <Route path="/instructor-dashboard/scores" element={<Navigate to="/instructor-dashboard" replace />} />
+            <Route path="/instructor-dashboard/scores" element={<InstructorScoresPage />} />
             <Route path="/instructor-dashboard/alerts" element={<AlertsPage />} />
             <Route path="/instructor-dashboard/profile" element={<ProfilePage />} />
             <Route path="/instructor-dashboard/course/:courseId" element={<CourseDashboard />} />
@@ -69,7 +71,7 @@ const App = () => (
             <Route path="/instructor-dashboard/course/:courseId/submissions" element={<SubmissionsDashboardPage />} />
             <Route path="/instructor-dashboard/course/:courseId/sessions" element={<SessionDashboard />} />
             <Route path="/parent-dashboard" element={<ParentDashboard />} />
-            <Route path="/parent-dashboard/scores" element={<Navigate to="/parent-dashboard" replace />} />
+            <Route path="/parent-dashboard/scores" element={<ParentScoresPage />} />
             <Route path="/parent-dashboard/alerts" element={<AlertsPage />} />
             <Route path="/parent-dashboard/profile" element={<ProfilePage />} />
             <Route path="/parent-dashboard/student/:studentId" element={<ParentStudentView />} />
