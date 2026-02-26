@@ -7,8 +7,8 @@ const Index = () => {
   return (
     <div className="trackademic-container flex items-center justify-center">
       <div className="max-w-xl mx-auto text-center space-y-6">
-        <h1 className="trackademic-brand text-3xl sm:text-4xl">Trackacademic</h1>
-        <p className="text-muted-foreground text-sm sm:text-base">
+        <h1 className="trackademic-brand text-3xl">Trackacademic</h1>
+        <p className="text-muted-foreground text-sm">
           Stay on top of classes, attendance, and activities with a shared view
           for students, parents, and instructors.
         </p>

@@ -90,28 +90,28 @@ export default function StudentCourseDashboard() {
     <div className="trackademic-container">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
+        <div className="mb-6">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate('/student-dashboard')}
-            className="mb-3 sm:mb-4"
+            className="mb-3"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2 flex items-center gap-2">
-              <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-primary" />
               {course.title}
             </h1>
             {course.description && (
-              <p className="text-muted-foreground text-sm sm:text-base">{course.description}</p>
+              <p className="text-muted-foreground text-sm">{course.description}</p>
             )}
             {course.course_code && (
-              <div className="flex items-center gap-2 mt-2 sm:mt-3">
-                <span className="text-xs sm:text-sm font-semibold">Course Code:</span>
-                <span className="text-xs sm:text-sm text-muted-foreground font-mono bg-muted px-2 sm:px-3 py-1 sm:py-1.5 rounded">
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-sm font-semibold">Course Code:</span>
+                <span className="text-sm text-muted-foreground font-mono bg-muted px-2 py-1 rounded">
                   {course.course_code}
                 </span>
               </div>
@@ -121,47 +121,47 @@ export default function StudentCourseDashboard() {
 
         {/* Projected Grade */}
         {currentUserId && (
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-6">
             <ProjectedGradeCard data={projectedGrade} courseTitle={course.title} />
           </div>
         )}
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-2 gap-3 mb-8">
           <Button
             variant="outline"
             size="lg"
             onClick={() => navigate(`/student-dashboard/course/${courseId}/qr-scanner`)}
-            className="h-auto py-4 sm:py-6 flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm"
+            className="h-auto py-4 flex-col gap-2 text-sm"
           >
-            <QrCode className="h-5 w-5 sm:h-6 sm:w-6" />
+            <QrCode className="h-5 w-5" />
             <span>QR Scanner</span>
           </Button>
           <Button
             variant="outline"
             size="lg"
             onClick={() => navigate(`/student-dashboard/course/${courseId}/attendance`)}
-            className="h-auto py-4 sm:py-6 flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm"
+            className="h-auto py-4 flex-col gap-2 text-sm"
           >
-            <ClipboardList className="h-5 w-5 sm:h-6 sm:w-6" />
+            <ClipboardList className="h-5 w-5" />
             <span>Attendance</span>
           </Button>
           <Button
             variant="outline"
             size="lg"
             onClick={() => navigate(`/student-dashboard/course/${courseId}/activities`)}
-            className="h-auto py-4 sm:py-6 flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm"
+            className="h-auto py-4 flex-col gap-2 text-sm"
           >
-            <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
+            <FileText className="h-5 w-5" />
             <span>Activities</span>
           </Button>
           <Button
             variant="outline"
             size="lg"
             onClick={() => navigate(`/student-dashboard/course/${courseId}/scores`)}
-            className="h-auto py-4 sm:py-6 flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm"
+            className="h-auto py-4 flex-col gap-2 text-sm"
           >
-            <FileBarChart className="h-5 w-5 sm:h-6 sm:w-6" />
+            <FileBarChart className="h-5 w-5" />
             <span>Scores</span>
           </Button>
         </div>

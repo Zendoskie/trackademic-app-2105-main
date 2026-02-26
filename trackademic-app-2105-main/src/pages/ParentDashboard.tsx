@@ -102,19 +102,19 @@ export default function ParentDashboard() {
     <div className="trackademic-container">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-6 sm:mb-8 space-y-3">
+        <div className="mb-6 space-y-3">
           <button
             type="button"
-            className="inline-flex items-center gap-2 text-xs sm:text-sm text-muted-foreground"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground"
             onClick={() => navigate("/")}
           >
             <ArrowLeft className="h-4 w-4" />
             Back
           </button>
           <div>
-            <h1 className="trackademic-brand text-2xl sm:text-3xl mb-1 sm:mb-2">Trackacademic</h1>
-            <h2 className="text-foreground text-lg sm:text-xl">Welcome back, {userName}!</h2>
-            <p className="text-muted-foreground text-sm sm:text-base">Monitor your student's academic progress</p>
+            <h1 className="trackademic-brand text-2xl mb-1">Trackacademic</h1>
+            <h2 className="text-foreground text-lg">Welcome back, {userName}!</h2>
+            <p className="text-muted-foreground text-sm">Monitor your student's academic progress</p>
           </div>
         </div>
 

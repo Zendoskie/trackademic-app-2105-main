@@ -2,11 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, User, Mail, Sun, Moon, Monitor } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, User, Mail } from "lucide-react";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
-import { useTheme, type Theme } from "@/contexts/ThemeContext";
-import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
@@ -19,8 +17,6 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-
-  const { theme, setTheme } = useTheme();
 
   const basePath = location.pathname.startsWith("/instructor-dashboard")
     ? "/instructor-dashboard"
@@ -93,7 +89,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="trackademic-container min-h-screen pb-24">
+    <div className="trackademic-container min-h-screen">
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between gap-3 mb-6">
           <Button variant="ghost" size="sm" onClick={() => navigate(basePath)}>
@@ -130,35 +126,6 @@ export default function ProfilePage() {
             <div>
               <p className="text-xs text-muted-foreground mb-1">Role</p>
               <p className="font-medium">{getRoleLabel(profile?.role || null)}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="trackademic-card mb-6">
-          <CardHeader>
-            <CardTitle className="text-base">Appearance</CardTitle>
-            <CardDescription>Choose light or dark mode for the app</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-2">
-              {(
-                [
-                  { value: "light" as Theme, label: "Light", icon: Sun },
-                  { value: "dark" as Theme, label: "Dark", icon: Moon },
-                  { value: "system" as Theme, label: "System", icon: Monitor },
-                ]
-              ).map(({ value, label, icon: Icon }) => (
-                <Button
-                  key={value}
-                  variant={theme === value ? "default" : "outline"}
-                  size="sm"
-                  className={cn("flex-1 gap-2", theme === value && "ring-2 ring-primary ring-offset-2 ring-offset-background")}
-                  onClick={() => setTheme(value)}
-                >
-                  <Icon className="h-4 w-4" />
-                  {label}
-                </Button>
-              ))}
             </div>
           </CardContent>
         </Card>

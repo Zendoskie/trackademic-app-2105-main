@@ -59,27 +59,27 @@ const InstructorDashboard = () => {
     <div className="trackademic-container">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-6 sm:mb-8 space-y-3">
+        <div className="mb-6 space-y-3">
           <button
             type="button"
-            className="inline-flex items-center gap-2 text-xs sm:text-sm text-muted-foreground"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground"
             onClick={() => navigate("/")}
           >
             <ArrowLeft className="h-4 w-4" />
             Back
           </button>
           <div>
-            <h1 className="trackademic-brand text-2xl sm:text-3xl mb-1">
+            <h1 className="trackademic-brand text-2xl mb-1">
               Trackacademic
             </h1>
-            <p className="text-muted-foreground text-xs sm:text-sm">
+            <p className="text-muted-foreground text-sm">
               Welcome back, {user?.user_metadata?.full_name || "Instructor"}!
             </p>
           </div>
         </div>
 
         {/* Dashboard Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 gap-6 mb-8">
           {/* My Courses */}
           <Card className="trackademic-card">
             <CardHeader className="pb-3">

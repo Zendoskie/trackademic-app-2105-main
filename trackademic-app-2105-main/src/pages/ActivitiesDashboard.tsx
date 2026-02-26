@@ -58,19 +58,19 @@ const ActivitiesDashboard = () => {
 
   return (
     <div className="trackademic-container">
-      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-        <div className="flex items-center gap-3 sm:gap-4">
+      <div className="max-w-7xl mx-auto space-y-4">
+        <div className="flex items-center gap-3">
           <Button
             variant="outline"
             size="icon"
             onClick={() => navigate(`/instructor-dashboard/course/${courseId}`)}
-            className="shrink-0 h-8 w-8 sm:h-9 sm:w-9"
+            className="shrink-0 h-9 w-9"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-xl sm:text-3xl font-bold tracking-tight">{course.title} - Activities</h1>
-            <p className="text-muted-foreground text-xs sm:text-sm">Upload and manage activity files</p>
+            <h1 className="text-xl font-bold tracking-tight">{course.title} - Activities</h1>
+            <p className="text-muted-foreground text-sm">Upload and manage activity files</p>
           </div>
         </div>
 
@@ -113,7 +113,7 @@ const ActivitiesDashboard = () => {
           </CardHeader>
           <CardContent>
             <Button
-              className="w-full sm:w-auto gap-2"
+              className="w-full gap-2"
               onClick={() => navigate(`/instructor-dashboard/course/${courseId}/submissions`)}
             >
               <FileCheck className="h-4 w-4" />

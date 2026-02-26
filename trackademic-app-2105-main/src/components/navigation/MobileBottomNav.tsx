@@ -92,8 +92,8 @@ const MobileBottomNav = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-xl sm:hidden shadow-[0_-4px_24px_rgba(0,0,0,0.15)]">
-      <div className="flex items-center justify-around h-16 px-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.15)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
+      <div className="flex items-center justify-around h-16 min-h-16 px-2 py-1.5">
         {navItems.map((item) => {
           const active = isActive(item.path, "exact" in item ? item.exact : undefined);
           const showBadge = "showUnread" in item && item.showUnread && unreadCount > 0;

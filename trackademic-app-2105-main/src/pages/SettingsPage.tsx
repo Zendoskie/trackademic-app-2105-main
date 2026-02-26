@@ -18,16 +18,16 @@ export default function SettingsPage() {
     <div className="trackademic-container">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <Button
             variant="ghost"
-            onClick={() => navigate(-1)} // Go back to the previous page
-            className="mb-4"
+            onClick={() => navigate(-1)}
+            className="mb-3"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <h1 className="text-3xl font-bold">Settings</h1>
+          <h1 className="text-2xl font-bold">Settings</h1>
         </div>
 
         {/* Settings Cards */}
@@ -58,7 +58,7 @@ export default function SettingsPage() {
               <CardDescription>Manage your account settings.</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="destructive" onClick={handleSignOut} className="w-full sm:w-auto">
+              <Button variant="destructive" onClick={handleSignOut} className="w-full">
                 Sign Out
               </Button>
             </CardContent>

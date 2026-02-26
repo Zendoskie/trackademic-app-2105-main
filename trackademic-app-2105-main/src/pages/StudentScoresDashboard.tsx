@@ -54,20 +54,20 @@ const StudentScoresDashboard = () => {
   if (!course) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-3 sm:p-4 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-        <div className="flex items-start gap-3 sm:gap-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 pb-24">
+      <div className="max-w-7xl mx-auto space-y-4">
+        <div className="flex items-start gap-3">
           <Button
             variant="outline"
             size="icon"
             onClick={() => navigate(`/student-dashboard/course/${courseId}`)}
-            className="shrink-0 h-9 w-9 sm:h-10 sm:w-10"
+            className="shrink-0 h-9 w-9"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight truncate">{course.title}</h1>
-            <p className="text-xs sm:text-sm text-muted-foreground">Scores</p>
+            <h1 className="text-xl font-bold tracking-tight truncate">{course.title}</h1>
+            <p className="text-sm text-muted-foreground">Scores</p>
           </div>
         </div>
 

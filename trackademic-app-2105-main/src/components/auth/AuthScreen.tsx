@@ -8,21 +8,21 @@ export const AuthScreen = () => {
   const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
 
   return (
-    <div className="trackademic-container !py-4 sm:!py-8">
+    <div className="trackademic-container !py-5">
       <div className="mx-auto max-w-md">
         {/* Header */}
-        <div className="text-center mb-6 sm:mb-12">
-          <h1 className="trackademic-brand text-3xl sm:text-4xl mb-1 sm:mb-3">
+        <div className="text-center mb-6">
+          <h1 className="trackademic-brand text-3xl mb-2">
             TRACKADEMIC
           </h1>
-          <p className="text-muted-foreground text-sm sm:text-lg">
+          <p className="text-muted-foreground text-sm">
             Track your academic journey
           </p>
         </div>
 
         {/* Welcome Message */}
-        <div className="text-center mb-4 sm:mb-8">
-          <h2 className="text-foreground mb-1 sm:mb-2 text-lg sm:text-xl">
+        <div className="text-center mb-5">
+          <h2 className="text-foreground mb-1 text-lg">
             Welcome to TRACKADEMIC
           </h2>
           <p className="text-muted-foreground text-sm">
@@ -31,7 +31,7 @@ export const AuthScreen = () => {
         </div>
 
         {/* Auth Card */}
-        <div className="trackademic-card p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div className="trackademic-card p-4 space-y-4">
           {/* Role Selection */}
           <RoleSelector 
             selectedRole={selectedRole}
@@ -52,7 +52,7 @@ export const AuthScreen = () => {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-4 sm:mt-8 text-xs sm:text-sm text-muted-foreground">
+        <div className="text-center mt-5 text-sm text-muted-foreground">
           <p>Secure • Simple • Academic</p>
         </div>
       </div>

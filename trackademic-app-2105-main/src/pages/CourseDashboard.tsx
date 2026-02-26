@@ -84,53 +84,53 @@ const CourseDashboard = () => {
   return <div className="trackademic-container">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/instructor-dashboard")} className="mb-3 sm:mb-4">
+        <div className="mb-6">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/instructor-dashboard")} className="mb-3">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2 flex items-center gap-2">
-              <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-primary" />
               {course.title}
             </h1>
-            {course.description && <p className="text-muted-foreground text-sm sm:text-base">{course.description}</p>}
-            {course.course_code && <div className="flex items-center gap-2 mt-2 sm:mt-3">
-                <span className="text-xs sm:text-sm font-semibold">Course Code:</span>
-                <span className="text-xs sm:text-sm text-muted-foreground font-mono bg-muted px-2 sm:px-3 py-1 sm:py-1.5 rounded">
+            {course.description && <p className="text-muted-foreground text-sm">{course.description}</p>}
+            {course.course_code && <div className="flex items-center gap-2 mt-2">
+                <span className="text-sm font-semibold">Course Code:</span>
+                <span className="text-sm text-muted-foreground font-mono bg-muted px-2 py-1 rounded">
                   {course.course_code}
                 </span>
-                <Button size="sm" variant="ghost" onClick={() => copyToClipboard(course.course_code!)} className="h-7 w-7 sm:h-8 sm:w-8 p-0">
-                  <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <Button size="sm" variant="ghost" onClick={() => copyToClipboard(course.course_code!)} className="h-8 w-8 p-0">
+                  <Copy className="h-4 w-4" />
                 </Button>
               </div>}
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <Button variant="outline" size="lg" onClick={() => navigate(`/instructor-dashboard/course/${courseId}/students`)} className="h-auto py-4 sm:py-6 flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
-            <Users className="h-5 w-5 sm:h-6 sm:w-6" />
+        <div className="grid grid-cols-2 gap-3 mb-8">
+          <Button variant="outline" size="lg" onClick={() => navigate(`/instructor-dashboard/course/${courseId}/students`)} className="h-auto py-4 flex-col gap-2 text-sm">
+            <Users className="h-5 w-5" />
             <span>Students</span>
           </Button>
           
-          <Button variant="outline" size="lg" onClick={() => navigate(`/instructor-dashboard/course/${courseId}/attendance`)} className="h-auto py-4 sm:py-6 flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
-            <ClipboardList className="h-5 w-5 sm:h-6 sm:w-6" />
+          <Button variant="outline" size="lg" onClick={() => navigate(`/instructor-dashboard/course/${courseId}/attendance`)} className="h-auto py-4 flex-col gap-2 text-sm">
+            <ClipboardList className="h-5 w-5" />
             <span>Attendance</span>
           </Button>
-          <Button variant="outline" size="lg" onClick={() => navigate(`/instructor-dashboard/course/${courseId}/activities`)} className="h-auto py-4 sm:py-6 flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
-            <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
+          <Button variant="outline" size="lg" onClick={() => navigate(`/instructor-dashboard/course/${courseId}/activities`)} className="h-auto py-4 flex-col gap-2 text-sm">
+            <FileText className="h-5 w-5" />
             <span>Activities</span>
           </Button>
-          <Button variant="outline" size="lg" onClick={() => navigate(`/instructor-dashboard/course/${courseId}/sessions`)} className="h-auto py-4 sm:py-6 flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
-            <Radio className="h-5 w-5 sm:h-6 sm:w-6" />
+          <Button variant="outline" size="lg" onClick={() => navigate(`/instructor-dashboard/course/${courseId}/sessions`)} className="h-auto py-4 flex-col gap-2 text-sm">
+            <Radio className="h-5 w-5" />
             <span>Sessions</span>
           </Button>
         </div>
 
         {/* Projected Grades */}
         {courseId && (
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-6">
             <ProjectedGradesList courseId={courseId} courseName={course.title} />
           </div>
         )}

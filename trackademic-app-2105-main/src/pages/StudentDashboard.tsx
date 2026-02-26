@@ -181,20 +181,20 @@ export default function StudentDashboard() {
     <div className="trackademic-container">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-6 sm:mb-8 space-y-3">
+        <div className="mb-6 space-y-3">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 px-0 text-xs sm:text-sm"
+            className="inline-flex items-center gap-2 px-0 text-sm"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
           <div>
-            <h1 className="trackademic-brand text-2xl sm:text-3xl mb-1">Trackacademic</h1>
-            <h2 className="text-foreground text-base sm:text-xl">Welcome back, {userName}!</h2>
-            <p className="text-muted-foreground text-xs sm:text-sm">Ready to continue your academic journey?</p>
+            <h1 className="trackademic-brand text-2xl mb-1">Trackacademic</h1>
+            <h2 className="text-foreground text-base">Welcome back, {userName}!</h2>
+            <p className="text-muted-foreground text-sm">Ready to continue your academic journey?</p>
           </div>
         </div>
 
@@ -210,7 +210,7 @@ export default function StudentDashboard() {
             </CardHeader>
             <CardContent>
               {enrolledCourses.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                <div className="grid grid-cols-1 gap-3 mb-4">
                   {enrolledCourses.map((course) => (
                     <Card 
                       key={course.id} 

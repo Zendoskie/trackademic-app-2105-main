@@ -86,6 +86,8 @@
     min-height: 100vh;
     background-attachment: fixed;
     padding-top: env(safe-area-inset-top, 20px);
+    padding-left: env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
   }
 
   html.dark body {
@@ -96,20 +98,21 @@
     background: linear-gradient(165deg, hsl(210 20% 98%) 0%, hsl(210 25% 96%) 50%, hsl(214 30% 94%) 100%);
   }
 
-  /* Typography */
+  /* Typography - mobile first */
   h1 {
-    @apply text-2xl font-bold tracking-tight sm:text-3xl;
+    @apply text-2xl font-bold tracking-tight;
     letter-spacing: -0.02em;
   }
 
   h2 {
-    @apply text-xl font-semibold tracking-tight sm:text-2xl;
+    @apply text-xl font-semibold tracking-tight;
     letter-spacing: -0.01em;
   }
 
-  /* Trackademic specific styles */
+  /* Trackademic container - mobile layout only */
   .trackademic-container {
-    @apply min-h-screen px-3 py-4 pb-20 sm:px-6 sm:py-8 sm:pb-8 lg:px-8;
+    @apply min-h-screen;
+    padding: 1.25rem 1rem max(6rem, calc(5rem + env(safe-area-inset-bottom, 0px)));
     background: transparent;
   }
 
