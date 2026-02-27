@@ -192,22 +192,15 @@ const SubmissionsDashboard = ({ courseId }: SubmissionsDashboardProps) => {
     }
   };
 
-  const handleDownload = async (filePath: string, fileName: string) => {
+  const handleDownload = async (filePath: string, _fileName: string) => {
     try {
       const { data, error } = await supabase.storage
         .from("activity-submissions")
-        .download(filePath);
+        .createSignedUrl(filePath, 3600, { download: true });
 
       if (error) throw error;
 
-      const url = URL.createObjectURL(data);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      window.open(data.signedUrl, "_blank");
     } catch (error) {
       console.error("Error downloading file:", error);
       toast({

@@ -98,19 +98,12 @@ const ActivityFilesList = ({ courseId, refreshTrigger, showDelete = true }: Acti
   const handleDownload = async (file: ActivityFile) => {
     try {
       const { data, error } = await supabase.storage
-        .from('course-activities')
-        .download(file.file_path);
+        .from("course-activities")
+        .createSignedUrl(file.file_path, 3600, { download: true });
 
       if (error) throw error;
 
-      const url = URL.createObjectURL(data);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = file.file_name;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      window.open(data.signedUrl, "_blank");
     } catch (error: any) {
       toast({
         title: "Download failed",
