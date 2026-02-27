@@ -255,7 +255,7 @@ export const AuthForm = ({ mode, role }: AuthFormProps) => {
           });
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data: signInData, error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
         });
@@ -267,6 +267,37 @@ export const AuthForm = ({ mode, role }: AuthFormProps) => {
             variant: "destructive",
           });
           return;
+        }
+
+        // Ensure the user is signing in with the correct role
+        const user = signInData.user ?? signInData.session?.user;
+        if (user) {
+          const storedRole = user.user_metadata?.role as
+            | "student"
+            | "parent"
+            | "instructor"
+            | undefined;
+
+          if (!storedRole) {
+            await supabase.auth.signOut();
+            toast({
+              title: "Role not set",
+              description:
+                "Your account does not have a role assigned. Please contact support or an administrator.",
+              variant: "destructive",
+            });
+            return;
+          }
+
+          if (storedRole !== role) {
+            await supabase.auth.signOut();
+            toast({
+              title: "Incorrect role selected",
+              description: `This account is registered as a ${storedRole}. Please sign in using the ${storedRole} role.`,
+              variant: "destructive",
+            });
+            return;
+          }
         }
 
         toast({
