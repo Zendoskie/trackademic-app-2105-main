@@ -141,7 +141,9 @@ export default function StudentQRScannerDashboard() {
                 const parsed = JSON.parse(decodedText);
                 const validated = QRDataSchema.safeParse(parsed);
                 if (validated.success) qrData = validated.data;
-              } catch {}
+              } catch {
+                // invalid JSON or schema mismatch, qrData stays null
+              }
 
               if (qrData && (qrData.type === 'session_join' || qrData.type === 'session_attendance')) {
                 const now = new Date().toISOString();

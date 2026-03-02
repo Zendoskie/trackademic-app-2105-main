@@ -13,24 +13,30 @@ interface QRScannerProps {
 
 type ScannerError = 'permission_denied' | 'permission_dismissed' | 'no_camera' | 'in_use' | 'generic' | null;
 
-function isPermissionError(err: any): boolean {
-  const msg = String(err?.message || err?.name || err || '').toLowerCase();
+function getErrorMessage(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  if (err && typeof err === "object" && "name" in err) return String((err as { name?: string }).name ?? "");
+  return String(err ?? "");
+}
+
+function isPermissionError(err: unknown): boolean {
+  const msg = (getErrorMessage(err) + String((err as { name?: string })?.name ?? "")).toLowerCase();
   return (
-    msg.includes('notallowederror') ||
-    msg.includes('permission denied') ||
-    msg.includes('permission dismissed') ||
-    msg.includes('not allowed')
+    msg.includes("notallowederror") ||
+    msg.includes("permission denied") ||
+    msg.includes("permission dismissed") ||
+    msg.includes("not allowed")
   );
 }
 
-function isNoCameraError(err: any): boolean {
-  const msg = String(err?.message || err?.name || err || '').toLowerCase();
-  return msg.includes('notfounderror') || msg.includes('device not found');
+function isNoCameraError(err: unknown): boolean {
+  const msg = getErrorMessage(err).toLowerCase();
+  return msg.includes("notfounderror") || msg.includes("device not found");
 }
 
-function isInUseError(err: any): boolean {
-  const msg = String(err?.message || err?.name || err || '').toLowerCase();
-  return msg.includes('notreadableerror') || msg.includes('could not start video');
+function isInUseError(err: unknown): boolean {
+  const msg = getErrorMessage(err).toLowerCase();
+  return msg.includes("notreadableerror") || msg.includes("could not start video");
 }
 
 export default function QRScanner({ onScanSuccess, autoStart = false }: QRScannerProps) {
@@ -107,7 +113,7 @@ export default function QRScanner({ onScanSuccess, autoStart = false }: QRScanne
       { facingMode: { exact: "environment" } } as MediaTrackConstraints,
     ];
 
-    let lastError: any = null;
+    let lastError: unknown = null;
 
     for (const constraint of cameraConstraints) {
       if (!resetScannerDiv()) break;
@@ -120,7 +126,7 @@ export default function QRScanner({ onScanSuccess, autoStart = false }: QRScanne
         setIsScanning(true);
         setIsStarting(false);
         return;
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Camera attempt failed:", constraint, err);
         lastError = err;
         scannerRef.current = null;
@@ -137,8 +143,8 @@ export default function QRScanner({ onScanSuccess, autoStart = false }: QRScanne
     setIsStarting(false);
 
     if (isPermissionError(lastError)) {
-      const msg = String(lastError?.message || '').toLowerCase();
-      setScannerError(msg.includes('dismissed') ? 'permission_dismissed' : 'permission_denied');
+      const msg = getErrorMessage(lastError).toLowerCase();
+      setScannerError(msg.includes("dismissed") ? "permission_dismissed" : "permission_denied");
     } else if (isNoCameraError(lastError)) {
       setScannerError('no_camera');
     } else if (isInUseError(lastError)) {

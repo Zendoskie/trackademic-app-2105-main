@@ -16,7 +16,9 @@ function getStoredTheme(): Theme {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "light" || stored === "dark" || stored === "system") return stored;
-  } catch {}
+  } catch {
+    // ignore storage errors (e.g. private mode)
+  }
   return "dark";
 }
 
@@ -46,7 +48,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setThemeState(next);
     try {
       localStorage.setItem(STORAGE_KEY, next);
-    } catch {}
+    } catch {
+      // ignore storage errors
+    }
     const resolved = getResolvedTheme(next);
     setResolvedTheme(resolved);
     applyTheme(resolved);

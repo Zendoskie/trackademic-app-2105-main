@@ -100,8 +100,9 @@ export default function ParentStudentView() {
         return;
       }
 
-      const courses = enrollmentsData
-        ?.map((enrollment: any) => enrollment.courses)
+      type EnrollmentRow = { courses: EnrolledCourse | null };
+      const courses = (enrollmentsData as EnrollmentRow[] | null)
+        ?.map((enrollment) => enrollment.courses)
         .filter(Boolean) as EnrolledCourse[];
       
       setEnrolledCourses(courses || []);

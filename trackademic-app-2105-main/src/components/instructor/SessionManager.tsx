@@ -98,10 +98,11 @@ export const SessionManager = ({ courseId }: SessionManagerProps) => {
         title: "Session Started",
         description: "Students can now scan the QR code to join.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to start session.";
       toast({
         title: "Error",
-        description: error.message || "Failed to start session.",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -145,10 +146,11 @@ export const SessionManager = ({ courseId }: SessionManagerProps) => {
         title: "Session Completed",
         description: `Attendance recorded for ${attendanceCount?.length || 0} students.`,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to complete session.";
       toast({
         title: "Error",
-        description: error.message || "Failed to complete session.",
+        description: message,
         variant: "destructive",
       });
     }

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { User } from "@supabase/supabase-js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -9,7 +11,7 @@ import CourseList from "@/components/instructor/CourseList";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
 
 const InstructorDashboard = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const navigate = useNavigate();
@@ -60,14 +62,16 @@ const InstructorDashboard = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6 space-y-3">
-          <button
+          <Button
             type="button"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground"
+            variant="ghost"
+            size="sm"
+            className="inline-flex items-center gap-2 px-0 text-sm text-muted-foreground"
             onClick={() => navigate("/")}
           >
             <ArrowLeft className="h-4 w-4" />
             Back
-          </button>
+          </Button>
           <div>
             <h1 className="trackademic-brand text-2xl mb-1">
               Trackacademic

@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Users, ChevronRight } from "lucide-react";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
@@ -62,8 +63,9 @@ export default function ParentDashboard() {
         return;
       }
 
-      const students = data
-        ?.map((link: any) => link.profiles)
+      type LinkRow = { profiles: LinkedStudent | null };
+      const students = (data as LinkRow[] | null)
+        ?.map((link) => link.profiles)
         .filter(Boolean) as LinkedStudent[];
       
       setLinkedStudents(students || []);
@@ -103,14 +105,16 @@ export default function ParentDashboard() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6 space-y-3">
-          <button
+          <Button
             type="button"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground"
+            variant="ghost"
+            size="sm"
+            className="inline-flex items-center gap-2 px-0 text-sm text-muted-foreground"
             onClick={() => navigate("/")}
           >
             <ArrowLeft className="h-4 w-4" />
             Back
-          </button>
+          </Button>
           <div>
             <h1 className="trackademic-brand text-2xl mb-1">Trackacademic</h1>
             <h2 className="text-foreground text-lg">Welcome back, {userName}!</h2>
@@ -119,8 +123,8 @@ export default function ParentDashboard() {
         </div>
 
         {/* Dashboard Content */}
-        <div className="mb-8">
-          <Card className="trackademic-card max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 gap-4 mb-8 max-w-4xl mx-auto">
+          <Card className="trackademic-card">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Users className="h-5 w-5 text-primary" />
@@ -153,6 +157,26 @@ export default function ParentDashboard() {
                   No students linked to your account yet.
                 </p>
               )}
+            </CardContent>
+          </Card>
+
+          <Card className="trackademic-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">
+                Exam Scores
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-muted-foreground text-sm">
+                View midterm and final examination scores for your linked students.
+              </p>
+              <Button
+                type="button"
+                onClick={() => navigate("/parent-dashboard/scores")}
+                className="w-full inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm active:scale-[0.98]"
+              >
+                Open Exam Scores
+              </Button>
             </CardContent>
           </Card>
         </div>

@@ -17,12 +17,23 @@ interface Course {
   course_code: string;
 }
 
+interface ActivityFileRow {
+  id: string;
+  file_name: string;
+  file_path: string;
+  file_size: number;
+  file_type: string;
+  uploaded_at: string;
+  description: string | null;
+  points: number | null;
+}
+
 const StudentActivitiesDashboard = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activityFiles, setActivityFiles] = useState<any[]>([]);
+  const [activityFiles, setActivityFiles] = useState<ActivityFileRow[]>([]);
   const [refreshSubmissions, setRefreshSubmissions] = useState(0);
 
   useEffect(() => {

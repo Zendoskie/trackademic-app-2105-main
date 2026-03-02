@@ -68,7 +68,8 @@ const SubmissionsDashboard = ({ courseId }: SubmissionsDashboardProps) => {
 
       if (error) throw error;
 
-      const studentsData = data.map((enrollment: any) => ({
+      type EnrollmentRow = { student_id: string; profiles: { id: string; full_name: string } };
+      const studentsData = (data as EnrollmentRow[]).map((enrollment) => ({
         id: enrollment.profiles.id,
         full_name: enrollment.profiles.full_name,
       }));
@@ -96,12 +97,13 @@ const SubmissionsDashboard = ({ courseId }: SubmissionsDashboardProps) => {
         .order("submitted_at", { ascending: false });
 
       if (error) throw error;
-      
-      const submissionsWithMaxPoints = (data || []).map((sub: any) => {
+
+      type SubmissionRow = { submitted_at: string; activity_files?: { points: number | null; deadline: string | null } | null } & Record<string, unknown>;
+      const submissionsWithMaxPoints = (data || []).map((sub: SubmissionRow) => {
         const deadline = sub.activity_files?.deadline ?? null;
         const submittedAt = new Date(sub.submitted_at);
         const isLate = deadline ? submittedAt > new Date(deadline) : false;
-        
+
         return {
           ...sub,
           max_points: sub.activity_files?.points ?? null,

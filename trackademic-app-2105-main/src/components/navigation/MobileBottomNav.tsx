@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { BookOpen, Bell, User, Settings, FileBarChart } from "lucide-react";
+import { BookOpen, Bell, User, Settings } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -82,8 +82,8 @@ const MobileBottomNav = () => {
     : [
         { icon: BookOpen, label: "Courses", path: `${basePath}`, exact: true },
         { icon: Bell, label: "Notification", path: `${basePath}/alerts`, showUnread: true },
-        { icon: FileBarChart, label: "Scores", path: `${basePath}/scores` },
         { icon: User, label: "Profile", path: `${basePath}/profile` },
+        { icon: Settings, label: "Settings", path: `${basePath}/settings` },
       ];
 
   const isActive = (path: string, exact?: boolean) => {

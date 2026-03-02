@@ -71,8 +71,9 @@ export default function StudentDashboard() {
         return;
       }
 
-      const courses = data
-        ?.map((enrollment: any) => enrollment.courses)
+      type EnrollmentRow = { courses: EnrolledCourse | null };
+      const courses = (data as EnrollmentRow[] | null)
+        ?.map((enrollment) => enrollment.courses)
         .filter(Boolean) as EnrolledCourse[];
       
       setEnrolledCourses(courses || []);

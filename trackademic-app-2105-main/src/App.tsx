@@ -62,6 +62,7 @@ const App = () => (
             <Route path="/instructor-dashboard/scores" element={<InstructorScoresPage />} />
             <Route path="/instructor-dashboard/alerts" element={<AlertsPage />} />
             <Route path="/instructor-dashboard/profile" element={<ProfilePage />} />
+            <Route path="/instructor-dashboard/settings" element={<SettingsPage />} />
             <Route path="/instructor-dashboard/course/:courseId" element={<CourseDashboard />} />
             <Route path="/instructor-dashboard/course/:courseId/students" element={<CourseStudentsDashboard />} />
             <Route path="/instructor-dashboard/course/:courseId/attendance" element={<CourseAttendanceDashboard />} />
@@ -74,6 +75,7 @@ const App = () => (
             <Route path="/parent-dashboard/scores" element={<ParentScoresPage />} />
             <Route path="/parent-dashboard/alerts" element={<AlertsPage />} />
             <Route path="/parent-dashboard/profile" element={<ProfilePage />} />
+            <Route path="/parent-dashboard/settings" element={<SettingsPage />} />
             <Route path="/parent-dashboard/student/:studentId" element={<ParentStudentView />} />
             <Route path="/parent-dashboard/student/:studentId/course/:courseId" element={<ParentStudentCourseDashboard />} />
             <Route path="/parent-dashboard/student/:studentId/course/:courseId/attendance" element={<ParentStudentAttendanceDashboard />} />

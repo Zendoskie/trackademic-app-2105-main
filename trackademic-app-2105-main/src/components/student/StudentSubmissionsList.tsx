@@ -61,12 +61,13 @@ const StudentSubmissionsList = ({ courseId, refreshTrigger, studentId: propStude
         .order("submitted_at", { ascending: false });
 
       if (error) throw error;
-      
-      const submissionsWithMaxPoints = (data || []).map((sub: any) => {
+
+      type SubmissionRow = { submitted_at: string; activity_files?: { points: number | null; deadline: string | null } | null } & Record<string, unknown>;
+      const submissionsWithMaxPoints = (data || []).map((sub: SubmissionRow) => {
         const deadline = sub.activity_files?.deadline ?? null;
         const submittedAt = new Date(sub.submitted_at);
         const isLate = deadline ? submittedAt > new Date(deadline) : false;
-        
+
         return {
           ...sub,
           max_points: sub.activity_files?.points ?? null,

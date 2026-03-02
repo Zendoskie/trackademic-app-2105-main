@@ -54,7 +54,7 @@ const ActivityFilesList = ({ courseId, refreshTrigger, showDelete = true }: Acti
 
       if (error) throw error;
       setFiles(data || []);
-    } catch (error: any) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to load activity files.",
@@ -86,10 +86,11 @@ const ActivityFilesList = ({ courseId, refreshTrigger, showDelete = true }: Acti
       setPreviewKind(isImage ? "image" : "iframe");
       setPreviewUrl(viewerUrl);
       setPreviewOpen(true);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to view file.";
       toast({
         title: "View failed",
-        description: error.message || "Failed to view file.",
+        description: message,
         variant: "destructive",
       });
     }
@@ -104,10 +105,11 @@ const ActivityFilesList = ({ courseId, refreshTrigger, showDelete = true }: Acti
       if (error) throw error;
 
       window.open(data.signedUrl, "_blank");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to download file.";
       toast({
         title: "Download failed",
-        description: error.message || "Failed to download file.",
+        description: message,
         variant: "destructive",
       });
     }
@@ -138,10 +140,11 @@ const ActivityFilesList = ({ courseId, refreshTrigger, showDelete = true }: Acti
       });
 
       fetchFiles();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to delete file.";
       toast({
         title: "Delete failed",
-        description: error.message || "Failed to delete file.",
+        description: message,
         variant: "destructive",
       });
     } finally {

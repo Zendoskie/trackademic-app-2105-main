@@ -110,11 +110,12 @@ export default function InstructorScoresPage() {
       }
 
       const scoreMap = new Map<string, ExamScoreRow>();
-      (scores || []).forEach((row: any) => {
-        scoreMap.set(row.student_id, row as ExamScoreRow);
+      (scores || []).forEach((row: ExamScoreRow) => {
+        scoreMap.set(row.student_id, row);
       });
 
-      const rows: StudentRow[] = (enrollments || []).map((enrollment: any) => {
+      type EnrollmentWithProfile = { student_id: string; profiles: { full_name?: string | null; email?: string | null } | null };
+      const rows: StudentRow[] = (enrollments || []).map((enrollment: EnrollmentWithProfile) => {
         const profile = enrollment.profiles;
         const score = scoreMap.get(enrollment.student_id);
         return {
@@ -174,7 +175,7 @@ export default function InstructorScoresPage() {
 
       const { error } = await supabase.from("exam_scores").upsert(payload, {
         onConflict: "course_id,student_id",
-      } as any);
+      });
 
       if (error) {
         console.error("Error saving exam_scores:", error);

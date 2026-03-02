@@ -105,10 +105,11 @@ const ActivityFileUpload = ({ courseId, onUploadSuccess }: ActivityFileUploadPro
       setDeadlineTime("23:59");
       setCategory("activity");
       onUploadSuccess();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An error occurred while uploading the file.";
       toast({
         title: "Upload failed",
-        description: error.message || "An error occurred while uploading the file.",
+        description: message,
         variant: "destructive",
       });
     } finally {

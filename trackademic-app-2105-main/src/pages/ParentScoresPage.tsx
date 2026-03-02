@@ -62,12 +62,13 @@ export default function ParentScoresPage() {
           return;
         }
 
-        const kids: Child[] = links
-          .map((row: any) => row.profiles)
+        type LinkRow = { profiles: { id: string; full_name: string } | null };
+        const kids: Child[] = (links as LinkRow[])
+          .map((row) => row.profiles)
           .filter(Boolean)
-          .map((p: any) => ({
-            id: p.id as string,
-            full_name: (p.full_name as string) || "Student",
+          .map((p) => ({
+            id: p.id,
+            full_name: p.full_name || "Student",
           }));
 
         setChildren(kids);
@@ -101,7 +102,8 @@ export default function ParentScoresPage() {
 
         const grouped: Record<string, CourseScore[]> = {};
 
-        (scores as any[]).forEach((row) => {
+        type ScoreRow = { student_id: string; course_id: string; midterm_score: number | null; final_score: number | null; courses: { id: string; title: string } | null };
+        (scores as ScoreRow[]).forEach((row) => {
           const course = row.courses;
           if (!course) return;
           const entry: CourseScore = {
